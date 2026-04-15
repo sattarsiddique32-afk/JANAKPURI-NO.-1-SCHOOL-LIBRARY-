@@ -1,304 +1,398 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library System | Made by ISUF</title>
+    <title>MADE BY ISUF | Premium Library System</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: { primary: '#6366f1', darkBg: '#0f172a', darkCard: '#1e293b' }
-                }
-            }
-        }
-    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.2); }
-        .dark .glass { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeInRight 0.5s ease; }
-        @keyframes fadeInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-        .sidebar-item.active { background: #6366f1; color: white; box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.5); }
+        :root {
+            --primary-soft: #f0f7ff;
+            --accent-blue: #3b82f6;
+            --isuf-gold: #ffd700;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        /* --- SPARKLING ANIMATION --- */
+        .sparkle-text {
+            background: linear-gradient(90deg, #1e293b, #3b82f6, #ffd700, #3b82f6, #1e293b);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: shine 3s linear infinite;
+            font-weight: 800;
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        /* --- KING LOGO GLOW --- */
+        .king-logo {
+            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.6));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-5px) rotate(5deg); }
+        }
+
+        /* UI Elements */
+        .page-section { display: none; }
+        .page-section.active { display: block; animation: fadeIn 0.6s ease-out; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .sidebar-link.active {
+            background-color: white;
+            color: var(--accent-blue);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .step-container { display: none; }
+        .step-container.active { display: block; animation: slideIn 0.4s forwards; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; }
     </style>
 </head>
-<body class="bg-slate-100 dark:bg-darkBg text-slate-800 dark:text-slate-100 min-h-screen transition-all">
+<body class="text-slate-800">
 
-    <aside id="sidebar" class="fixed left-0 top-0 h-full w-64 glass border-r z-50 transition-transform -translate-x-full lg:translate-x-0">
-        <div class="p-6">
-            <div class="flex items-center gap-3 mb-10 animate__animated animate__fadeInLeft">
-                <div class="h-10 w-10 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-xl">
-                    <i class="fas fa-user-shield"></i>
-                </div>
-                <div>
-                    <p class="text-[10px] uppercase font-bold text-slate-400 leading-none">Developer</p>
-                    <h1 class="text-xl font-black tracking-tighter text-indigo-600 dark:text-indigo-400">made by ISUF</h1>
-                </div>
-            </div>
+    <div id="toast-container"></div>
 
-            <nav class="space-y-2">
-                <button onclick="switchTab('dashboard')" class="sidebar-item active w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all" data-tab="dashboard"><i class="fas fa-home w-5"></i> Dashboard</button>
-                <button onclick="switchTab('books')" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all" data-tab="books"><i class="fas fa-book w-5"></i> Manage Books</button>
-                <button onclick="switchTab('issue')" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all" data-tab="issue"><i class="fas fa-exchange-alt w-5"></i> Issue / Return</button>
-                <button onclick="switchTab('students')" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all" data-tab="students"><i class="fas fa-users w-5"></i> Student Database</button>
-            </nav>
-        </div>
+    <div class="flex h-screen overflow-hidden">
         
-        <div class="absolute bottom-6 w-full px-6 text-center">
-            <button onclick="toggleDarkMode()" class="w-full py-3 glass rounded-2xl mb-4 flex items-center justify-center gap-2 hover:bg-white transition-all">
-                <i id="theme-icon" class="fas fa-moon"></i> <span>Dark Mode</span>
-            </button>
-            <p class="text-[10px] text-slate-400 font-bold">ISUF LIBRARY PRO v4.0</p>
-        </div>
-    </aside>
-
-    <main class="lg:ml-64 p-4 md:p-8">
-        <header class="flex justify-between items-center mb-8">
-            <h2 id="page-title" class="text-3xl font-black">Dashboard</h2>
-            <button onclick="toggleSidebar()" class="lg:hidden p-3 glass rounded-xl"><i class="fas fa-bars"></i></button>
-        </header>
-
-        <section id="dashboard" class="tab-content active">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div class="glass p-6 rounded-3xl animate__animated animate__zoomIn">
-                    <p class="text-slate-400 text-xs font-bold uppercase mb-2">Total Books</p>
-                    <h3 id="stat-books" class="text-4xl font-black text-indigo-600">0</h3>
-                </div>
-                <div class="glass p-6 rounded-3xl animate__animated animate__zoomIn" style="animation-delay: 0.1s">
-                    <p class="text-amber-500 text-xs font-bold uppercase mb-2">Issued Books</p>
-                    <h3 id="stat-issued" class="text-4xl font-black">0</h3>
-                </div>
-                <div class="glass p-6 rounded-3xl animate__animated animate__zoomIn" style="animation-delay: 0.2s">
-                    <p class="text-emerald-500 text-xs font-bold uppercase mb-2">Students</p>
-                    <h3 id="stat-students" class="text-4xl font-black">0</h3>
-                </div>
-                <div class="glass p-6 rounded-3xl animate__animated animate__zoomIn" style="animation-delay: 0.3s">
-                    <p class="text-slate-400 text-xs font-bold uppercase mb-2">History</p>
-                    <h3 id="stat-history" class="text-4xl font-black">0</h3>
-                </div>
+        <aside class="w-64 bg-slate-50 border-r border-slate-200 hidden md:flex flex-col p-6">
+            <div class="flex flex-col items-center mb-10 px-2">
+                <div class="king-logo text-4xl mb-2">👑</div>
+                <h1 class="sparkle-text text-xl tracking-tighter text-center uppercase">Made By ISUF</h1>
             </div>
+
+            <nav class="space-y-2 flex-grow">
+                <a href="#" onclick="showSection('dashboard')" id="nav-dashboard" class="sidebar-link active flex items-center gap-3 px-4 py-3 text-slate-600 transition-all font-medium">
+                    <i class="fas fa-grid-2 w-5"></i> Dashboard
+                </a>
+                <a href="#" onclick="showSection('add-book')" id="nav-add-book" class="sidebar-link flex items-center gap-3 px-4 py-3 text-slate-600 transition-all font-medium">
+                    <i class="fas fa-plus-circle w-5"></i> Add New Book
+                </a>
+                <a href="#" onclick="showSection('issue-book')" id="nav-issue-book" class="sidebar-link flex items-center gap-3 px-4 py-3 text-slate-600 transition-all font-medium">
+                    <i class="fas fa-exchange-alt w-5"></i> Issue Book
+                </a>
+                <a href="#" onclick="showSection('records')" id="nav-records" class="sidebar-link flex items-center gap-3 px-4 py-3 text-slate-600 transition-all font-medium">
+                    <i class="fas fa-list-ul w-5"></i> Library Records
+                </a>
+            </nav>
+
+            <div class="mt-auto pt-6 border-t border-slate-200 text-center">
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Premium Software</p>
+                <p class="text-xs font-black sparkle-text">ISUF EDITION v1.0</p>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col h-full overflow-y-auto bg-[#F8FAFC]">
             
-            <div class="glass p-6 rounded-3xl">
-                <h4 class="font-bold mb-4 flex items-center gap-2 text-indigo-500"><i class="fas fa-list-ul"></i> Recent Activity</h4>
-                <div id="logs" class="space-y-2"></div>
-            </div>
-        </section>
-
-        <section id="books" class="tab-content">
-            <div class="flex flex-wrap gap-4 mb-6">
-                <input type="text" id="book-search" oninput="renderBooks()" placeholder="Search Book ID or Name..." class="flex-1 glass px-6 py-4 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500">
-                <button onclick="toggleModal('book-modal')" class="px-8 py-4 bg-indigo-600 text-white rounded-2xl font-bold shadow-lg hover:scale-105 transition-all">Add Book</button>
-            </div>
-            <div id="books-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
-        </section>
-
-        <section id="issue" class="tab-content">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="glass p-8 rounded-[2rem] border-2 border-indigo-500/20 shadow-2xl">
-                    <h4 class="text-xl font-black mb-6 text-indigo-600"><i class="fas fa-bolt text-amber-500 mr-2"></i>Quick Issue Book</h4>
-                    <form onsubmit="handleSmartIssue(event)" class="space-y-4">
-                        <input type="text" id="iss-book-id" placeholder="Enter Book ID" required class="w-full p-4 glass rounded-2xl outline-none">
-                        <input type="text" id="iss-student-id" placeholder="Enter Student ID" required class="w-full p-4 glass rounded-2xl outline-none">
-                        <input type="text" id="iss-student-name" placeholder="Student Name" required class="w-full p-4 glass rounded-2xl outline-none">
-                        <input type="text" id="iss-student-class" placeholder="Class / Section" required class="w-full p-4 glass rounded-2xl outline-none">
-                        <button type="submit" class="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black shadow-xl hover:bg-indigo-700 transition-all uppercase">Issue Now</button>
-                    </form>
+            <header class="h-16 bg-white/80 backdrop-blur-md border-b border-slate-100 flex items-center justify-between px-8 sticky top-0 z-40">
+                <div class="flex items-center gap-2">
+                    <span class="text-lg">👑</span>
+                    <h2 id="section-title" class="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Dashboard</h2>
                 </div>
-
-                <div class="lg:col-span-2 glass rounded-[2rem] overflow-hidden">
-                    <div class="p-6 bg-indigo-600 text-white font-bold flex justify-between items-center">
-                        <span>Currently Issued Books</span>
-                        <i class="fas fa-exchange-alt"></i>
+                <div class="flex items-center gap-3">
+                    <span class="text-xs font-bold text-slate-400">ADMIN PORTAL</span>
+                    <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs">
+                        <i class="fas fa-shield-alt"></i>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left">
-                            <thead class="bg-slate-50 dark:bg-slate-900 text-[10px] uppercase font-bold"><tr class="p-4 text-slate-500 dark:text-slate-400"><th class="p-4">Book</th><th class="p-4">Issued To</th><th class="p-4 text-right">Action</th></tr></thead>
-                            <tbody id="issued-list"></tbody>
+                </div>
+            </header>
+
+            <div class="p-8">
+                
+                <section id="dashboard" class="page-section active">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="glass-card p-6 rounded-3xl bg-white shadow-sm flex items-center gap-5 border-b-4 border-blue-500">
+                            <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-500"><i class="fas fa-book text-xl"></i></div>
+                            <div><p class="text-slate-400 text-xs font-bold uppercase">Total Books</p><h3 id="stat-total-books" class="text-2xl font-black">0</h3></div>
+                        </div>
+                        <div class="glass-card p-6 rounded-3xl bg-white shadow-sm flex items-center gap-5 border-b-4 border-yellow-400">
+                            <div class="w-12 h-12 bg-yellow-50 rounded-2xl flex items-center justify-center text-yellow-500"><i class="fas fa-user-tag text-xl"></i></div>
+                            <div><p class="text-slate-400 text-xs font-bold uppercase">Issued</p><h3 id="stat-issued-books" class="text-2xl font-black">0</h3></div>
+                        </div>
+                        <div class="glass-card p-6 rounded-3xl bg-white shadow-sm flex items-center gap-5 border-b-4 border-green-400">
+                            <div class="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center text-green-500"><i class="fas fa-check-double text-xl"></i></div>
+                            <div><p class="text-slate-400 text-xs font-bold uppercase">Available</p><h3 id="stat-available-books" class="text-2xl font-black">0</h3></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900 rounded-[2rem] p-10 text-white relative overflow-hidden">
+                        <div class="relative z-10">
+                            <h2 class="text-4xl font-black mb-2 sparkle-text">ISUF LIBRARY ENGINE</h2>
+                            <p class="text-slate-400 max-w-md mb-8">The most sophisticated local storage library management system ever built for speed and elegance.</p>
+                            <button onclick="showSection('issue-book')" class="bg-blue-600 hover:bg-blue-700 px-8 py-3 rounded-xl font-bold transition-all transform hover:scale-105">
+                                Start Issuing Now
+                            </button>
+                        </div>
+                        <div class="absolute right-[-20px] bottom-[-20px] text-[15rem] opacity-10 rotate-12">👑</div>
+                    </div>
+                </section>
+
+                <section id="add-book" class="page-section max-w-xl mx-auto">
+                    <div class="bg-white rounded-3xl shadow-xl p-8 border border-slate-100">
+                        <h3 class="text-xl font-black mb-6 uppercase tracking-tight">Register New Inventory</h3>
+                        <form id="add-book-form" class="space-y-5">
+                            <div class="flex justify-center">
+                                <label class="w-24 h-24 border-2 border-dashed border-slate-200 rounded-3xl flex items-center justify-center cursor-pointer overflow-hidden relative bg-slate-50">
+                                    <input type="file" accept="image/*" capture="environment" id="book-image" class="hidden" onchange="previewImage(event)">
+                                    <i id="cam-icon" class="fas fa-camera text-slate-300 text-xl"></i>
+                                    <img id="image-preview" class="absolute inset-0 w-full h-full object-cover hidden">
+                                </label>
+                            </div>
+                            <input type="text" id="book-id" required class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-500" placeholder="Book ID (Required)">
+                            <input type="text" id="book-title" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-500" placeholder="Book Title">
+                            <select id="book-category" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl outline-none">
+                                <option>General</option><option>Fiction</option><option>Technology</option><option>Science</option>
+                            </select>
+                            <button type="submit" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-black transition-all">Add to Database</button>
+                        </form>
+                    </div>
+                </section>
+
+                <section id="issue-book" class="page-section max-w-lg mx-auto">
+                    <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
+                        <div class="bg-slate-50 px-8 py-4 border-b flex justify-between items-center">
+                            <span id="step-txt" class="text-[10px] font-black uppercase text-blue-600">Phase 01</span>
+                            <div class="flex gap-1" id="step-dots">
+                                <div class="w-4 h-1 rounded bg-blue-600"></div>
+                                <div class="w-4 h-1 rounded bg-slate-200"></div>
+                                <div class="w-4 h-1 rounded bg-slate-200"></div>
+                            </div>
+                        </div>
+                        <form id="issue-book-form" class="p-8 space-y-6">
+                            <div id="step-1" class="step-container active">
+                                <h4 class="font-bold text-lg mb-4">Identify Asset</h4>
+                                <input type="text" id="issue-book-id" class="w-full p-4 bg-slate-50 border rounded-xl" placeholder="Enter Book Code">
+                            </div>
+                            <div id="step-2" class="step-container">
+                                <h4 class="font-bold text-lg mb-4">Student Credentials</h4>
+                                <input type="text" id="issue-student-id" class="w-full p-4 bg-slate-50 border rounded-xl" placeholder="Enter Student ID">
+                            </div>
+                            <div id="step-3" class="step-container">
+                                <h4 class="font-bold text-lg mb-4">Final Registration</h4>
+                                <div class="space-y-3">
+                                    <input type="text" id="issue-student-name" class="w-full p-4 bg-slate-50 border rounded-xl" placeholder="Student Name">
+                                    <input type="text" id="issue-student-class" class="w-full p-4 bg-slate-50 border rounded-xl" placeholder="Class / Section">
+                                </div>
+                            </div>
+                            <div class="flex justify-between pt-4">
+                                <button type="button" id="prev-btn" onclick="prevStep()" class="hidden text-slate-400 font-bold">Back</button>
+                                <button type="button" id="next-btn" onclick="nextStep()" class="ml-auto bg-blue-600 text-white px-8 py-3 rounded-xl font-bold">Next</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <section id="records" class="page-section">
+                    <div class="flex justify-between items-end mb-6">
+                        <h3 class="text-2xl font-black">Central Archives</h3>
+                        <div class="flex bg-white p-1 rounded-xl shadow-sm border">
+                            <button onclick="toggleTable('books')" id="tab-books" class="px-5 py-2 rounded-lg text-xs font-bold bg-slate-900 text-white">Inventory</button>
+                            <button onclick="toggleTable('issued')" id="tab-issued" class="px-5 py-2 rounded-lg text-xs font-bold text-slate-500">Issued</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-3xl shadow-sm border overflow-hidden">
+                        <table id="main-table" class="w-full text-left">
+                            <thead class="bg-slate-50 text-[10px] uppercase font-black text-slate-400">
+                                <tr id="table-head"></tr>
+                            </thead>
+                            <tbody id="table-body" class="text-sm divide-y divide-slate-50"></tbody>
                         </table>
+                        <div id="empty-msg" class="hidden p-20 text-center text-slate-300 font-bold">NO DATA FOUND</div>
                     </div>
-                </div>
+                </section>
             </div>
-        </section>
-
-        <section id="students" class="tab-content">
-            <div class="glass rounded-3xl overflow-hidden shadow-xl border border-slate-200 dark:border-slate-800">
-                <table class="w-full text-left text-sm">
-                    <thead class="bg-indigo-600 text-white uppercase text-xs"><tr><th class="p-5">ID</th><th class="p-5">Name</th><th class="p-5">Class</th><th class="p-5 text-right">Action</th></tr></thead>
-                    <tbody id="student-list" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
-                </table>
-            </div>
-        </section>
-    </main>
-
-    <div id="book-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-[100] backdrop-blur-sm p-4">
-        <div class="glass max-w-md w-full rounded-[2.5rem] p-8 animate__animated animate__zoomIn">
-            <h3 class="text-2xl font-black mb-6">Inventory Entry</h3>
-            <form onsubmit="handleBookAdd(event)" class="space-y-4">
-                <input type="text" id="nb-id" placeholder="Book ID" required class="w-full p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl outline-none">
-                <input type="text" id="nb-name" placeholder="Book Title" required class="w-full p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl outline-none">
-                <input type="text" id="nb-cat" placeholder="Category" class="w-full p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl outline-none">
-                <div class="flex gap-4 pt-4">
-                    <button type="button" onclick="toggleModal('book-modal')" class="flex-1 font-bold text-slate-400">Cancel</button>
-                    <button type="submit" class="flex-1 py-4 bg-indigo-600 text-white rounded-2xl font-bold">Save</button>
-                </div>
-            </form>
-        </div>
+        </main>
     </div>
 
     <script>
-        let db = {
-            books: JSON.parse(localStorage.getItem('lib_v4_books')) || [],
-            students: JSON.parse(localStorage.getItem('lib_v4_students')) || [],
-            issued: JSON.parse(localStorage.getItem('lib_v4_issued')) || [],
-            history: JSON.parse(localStorage.getItem('lib_v4_history')) || [],
-            logs: JSON.parse(localStorage.getItem('lib_v4_logs')) || []
+        const DB = {
+            get(key) { return JSON.parse(localStorage.getItem(key)) || []; },
+            set(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
         };
 
-        const sync = () => {
-            Object.keys(db).forEach(k => localStorage.setItem('lib_v4_'+k, JSON.stringify(db[k])));
-            updateDashboard();
-        };
+        let currentStep = 1;
 
-        const addLog = (msg) => {
-            db.logs.unshift({ msg, time: new Date().toLocaleTimeString() });
-            db.logs = db.logs.slice(0, 5);
-            sync(); renderLogs();
-        };
-
-        function switchTab(id) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+        function showSection(id) {
+            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(`nav-${id}`).classList.add('active');
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            document.querySelector(`[data-tab="${id}"]`).classList.add('active');
-            document.getElementById('page-title').innerText = id === 'issue' ? 'Issue / Return' : id.charAt(0).toUpperCase() + id.slice(1);
-            if(window.innerWidth < 1024) toggleSidebar();
-            if(id === 'books') renderBooks();
-            if(id === 'issue') renderIssued();
-            if(id === 'students') renderStudents();
+            document.getElementById('section-title').innerText = id;
+            if (id === 'dashboard') updateStats();
+            if (id === 'records') renderTables('books');
         }
 
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('-translate-x-full'); }
-        function toggleModal(id) { document.getElementById(id).classList.toggle('hidden'); document.getElementById(id).classList.toggle('flex'); }
-
-        // BOOK ACTIONS
-        function handleBookAdd(e) {
-            e.preventDefault();
-            const id = document.getElementById('nb-id').value.trim();
-            if(db.books.some(b => b.id === id)) return alert('Book ID already exists!');
-            db.books.push({ id, name: document.getElementById('nb-name').value, cat: document.getElementById('nb-cat').value });
-            addLog(`Book Added: ${id}`);
-            toggleModal('book-modal'); e.target.reset(); renderBooks();
+        function showToast(msg, error = false) {
+            const t = document.createElement('div');
+            t.className = `animate__animated animate__fadeInRight p-4 mb-2 rounded-xl text-white font-bold text-sm shadow-xl ${error ? 'bg-red-500' : 'bg-blue-600'}`;
+            t.innerHTML = `👑 ${msg}`;
+            document.getElementById('toast-container').appendChild(t);
+            setTimeout(() => { t.remove(); }, 3000);
         }
 
-        function renderBooks() {
-            const q = document.getElementById('book-search').value.toLowerCase();
-            document.getElementById('books-grid').innerHTML = db.books.filter(b => b.id.toLowerCase().includes(q) || b.name.toLowerCase().includes(q)).map(b => `
-                <div class="glass p-5 rounded-3xl animate__animated animate__fadeIn">
-                    <div class="h-10 w-10 bg-indigo-50 dark:bg-slate-800 rounded-xl flex items-center justify-center mb-4"><i class="fas fa-book text-indigo-500"></i></div>
-                    <h5 class="font-bold leading-tight">${b.name}</h5>
-                    <p class="text-[10px] text-slate-400 font-mono mt-1 uppercase">ID: ${b.id}</p>
-                    <button onclick="deleteBook('${b.id}')" class="mt-4 text-red-500 text-xs font-bold hover:underline"><i class="fas fa-trash-alt mr-1"></i> Delete</button>
-                </div>
-            `).join('');
-        }
-
-        function deleteBook(id) {
-            if(db.issued.some(i => i.bId === id)) return alert('Book is currently issued!');
-            if(confirm('Delete book?')) {
-                db.books = db.books.filter(b => b.id !== id);
-                addLog(`Deleted Book: ${id}`); sync(); renderBooks();
-            }
-        }
-
-        // SMART ISSUE LOGIC
-        function handleSmartIssue(e) {
-            e.preventDefault();
-            const bId = document.getElementById('iss-book-id').value.trim();
-            const sId = document.getElementById('iss-student-id').value.trim();
-            const sName = document.getElementById('iss-student-name').value;
-            const sClass = document.getElementById('iss-student-class').value;
-
-            const book = db.books.find(b => b.id === bId);
-            if(!book) return alert('Error: Book ID not found!');
-            if(db.issued.some(i => i.bId === bId)) return alert('Error: Book is already issued!');
-
-            // Smart Update/Add Student
-            const studentIdx = db.students.findIndex(s => s.id === sId);
-            if(studentIdx > -1) {
-                db.students[studentIdx] = { id: sId, name: sName, class: sClass };
-                addLog(`Info Updated for Student: ${sId}`);
+        // Logic for Steps
+        function nextStep() {
+            if (currentStep < 3) {
+                currentStep++;
+                updateStepsUI();
             } else {
-                db.students.push({ id: sId, name: sName, class: sClass });
-                addLog(`Auto-Registered Student: ${sId}`);
-            }
-
-            db.issued.push({ bId, bName: book.name, sId, sName, sClass, date: new Date().toLocaleDateString() });
-            addLog(`Issued ${bId} to ${sId}`);
-            e.target.reset(); sync(); renderIssued();
-        }
-
-        function renderIssued() {
-            document.getElementById('issued-list').innerHTML = db.issued.map((i, idx) => `
-                <tr class="border-b border-slate-100 dark:border-slate-800 animate__animated animate__fadeIn">
-                    <td class="p-4"><p class="font-bold text-sm">${i.bName}</p><span class="text-[10px] text-slate-400">ID: ${i.bId}</span></td>
-                    <td class="p-4 text-sm">${i.sName} <br><span class="text-[10px] text-slate-400">ID: ${i.sId} | ${i.sClass}</span></td>
-                    <td class="p-4 text-right"><button onclick="returnBook(${idx})" class="bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-black shadow-lg hover:bg-emerald-600 transition-all">RETURN</button></td>
-                </tr>
-            `).join('');
-        }
-
-        function returnBook(idx) {
-            const item = db.issued[idx];
-            db.history.push({ ...item, returnDate: new Date().toLocaleDateString() });
-            db.issued.splice(idx, 1);
-            addLog(`Book Returned: ${item.bId}`); sync(); renderIssued();
-        }
-
-        // STUDENT DATABASE & DELETE
-        function renderStudents() {
-            document.getElementById('student-list').innerHTML = db.students.map(s => `
-                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                    <td class="p-5 font-mono text-indigo-500 font-bold">${s.id}</td>
-                    <td class="p-5 font-bold">${s.name}</td>
-                    <td class="p-5 text-sm">${s.class}</td>
-                    <td class="p-5 text-right"><button onclick="deleteStudent('${s.id}')" class="text-red-500 text-xs font-bold hover:scale-110 transition-transform"><i class="fas fa-trash-alt mr-1"></i> Delete</button></td>
-                </tr>
-            `).join('');
-        }
-
-        function deleteStudent(id) {
-            if(db.issued.some(i => i.sId === id)) return alert('Cannot delete! Student has a book.');
-            if(confirm('Remove student record?')) {
-                db.students = db.students.filter(s => s.id !== id);
-                addLog(`Student Removed: ${id}`); sync(); renderStudents();
+                finalizeIssue();
             }
         }
 
-        function updateDashboard() {
-            document.getElementById('stat-books').innerText = db.books.length;
-            document.getElementById('stat-issued').innerText = db.issued.length;
-            document.getElementById('stat-students').innerText = db.students.length;
-            document.getElementById('stat-history').innerText = db.history.length;
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateStepsUI();
+            }
         }
 
-        function renderLogs() {
-            document.getElementById('logs').innerHTML = db.logs.map(l => `<div class="p-3 glass rounded-xl flex justify-between text-xs font-medium"><span>${l.msg}</span><span class="text-slate-400">${l.time}</span></div>`).join('');
+        function updateStepsUI() {
+            document.querySelectorAll('.step-container').forEach(c => c.classList.remove('active'));
+            document.getElementById(`step-${currentStep}`).classList.add('active');
+            document.getElementById('prev-btn').classList.toggle('hidden', currentStep === 1);
+            document.getElementById('next-btn').innerText = currentStep === 3 ? 'Confirm' : 'Next';
+            document.getElementById('step-txt').innerText = `Phase 0${currentStep}`;
+            
+            const dots = document.getElementById('step-dots').children;
+            for(let i=0; i<3; i++) dots[i].className = i < currentStep ? 'w-4 h-1 rounded bg-blue-600' : 'w-4 h-1 rounded bg-slate-200';
         }
 
-        function toggleDarkMode() {
-            const isDark = document.documentElement.classList.toggle('dark');
-            localStorage.setItem('lib_v4_theme', isDark ? 'dark' : 'light');
-            document.getElementById('theme-icon').className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+        function updateStats() {
+            const b = DB.get('b').length;
+            const i = DB.get('i').length;
+            document.getElementById('stat-total-books').innerText = b;
+            document.getElementById('stat-issued-books').innerText = i;
+            document.getElementById('stat-available-books').innerText = b - i;
         }
 
-        window.onload = () => {
-            if(localStorage.getItem('lib_v4_theme') === 'dark') toggleDarkMode();
-            sync(); renderLogs(); switchTab('dashboard');
+        // Add Book
+        document.getElementById('add-book-form').onsubmit = (e) => {
+            e.preventDefault();
+            const books = DB.get('b');
+            const id = document.getElementById('book-id').value;
+            if(books.find(x => x.id === id)) return showToast("ID Exists", true);
+            
+            books.push({
+                id,
+                title: document.getElementById('book-title').value || 'Unnamed Book',
+                cat: document.getElementById('book-category').value,
+                img: document.getElementById('image-preview').src
+            });
+            DB.set('b', books);
+            showToast("Asset Registered!");
+            e.target.reset();
+            document.getElementById('image-preview').classList.add('hidden');
+            showSection('dashboard');
         };
+
+        function finalizeIssue() {
+            const i = DB.get('i');
+            const bId = document.getElementById('issue-book-id').value;
+            if(!DB.get('b').find(x => x.id === bId)) return showToast("No such book", true);
+            
+            i.push({
+                bId,
+                sId: document.getElementById('issue-student-id').value,
+                name: document.getElementById('issue-student-name').value,
+                date: new Date().toLocaleDateString()
+            });
+            DB.set('i', i);
+            showToast("Book Issued Successfully!");
+            document.getElementById('issue-book-form').reset();
+            currentStep = 1;
+            updateStepsUI();
+            showSection('records');
+        }
+
+        function renderTables(type) {
+            const body = document.getElementById('table-body');
+            const head = document.getElementById('table-head');
+            body.innerHTML = "";
+            
+            if(type === 'books') {
+                head.innerHTML = "<th class='p-4'>Asset</th><th class='p-4'>Category</th><th class='p-4'>Action</th>";
+                const data = DB.get('b');
+                data.forEach(x => {
+                    body.innerHTML += `<tr class='p-4'>
+                        <td class='p-4 font-bold'>${x.title}<br><span class='text-[10px] text-slate-400'>${x.id}</span></td>
+                        <td class='p-4'>${x.cat}</td>
+                        <td class='p-4'><button onclick="del('b','${x.id}')" class='text-red-400'><i class='fas fa-trash'></i></button></td>
+                    </tr>`;
+                });
+            } else {
+                head.innerHTML = "<th class='p-4'>Book ID</th><th class='p-4'>Student</th><th class='p-4'>Action</th>";
+                const data = DB.get('i');
+                data.forEach(x => {
+                    body.innerHTML += `<tr>
+                        <td class='p-4'>${x.bId}</td>
+                        <td class='p-4 font-bold'>${x.name}</td>
+                        <td class='p-4'><button onclick="del('i','${x.bId}')" class='text-blue-500 font-bold'>Return</button></td>
+                    </tr>`;
+                });
+            }
+        }
+
+        function del(key, id) {
+            if(confirm("Confirm action?")) {
+                let data = DB.get(key);
+                data = data.filter(x => (key === 'b' ? x.id : x.bId) !== id);
+                DB.set(key, data);
+                renderTables(key === 'b' ? 'books' : 'issued');
+                showToast("Registry Updated");
+            }
+        }
+
+        function toggleTable(t) {
+            const isB = t === 'books';
+            document.getElementById('tab-books').className = isB ? 'px-5 py-2 rounded-lg text-xs font-bold bg-slate-900 text-white' : 'px-5 py-2 rounded-lg text-xs font-bold text-slate-500';
+            document.getElementById('tab-issued').className = !isB ? 'px-5 py-2 rounded-lg text-xs font-bold bg-slate-900 text-white' : 'px-5 py-2 rounded-lg text-xs font-bold text-slate-500';
+            renderTables(t);
+        }
+
+        function previewImage(e) {
+            const r = new FileReader();
+            r.onload = () => {
+                const img = document.getElementById('image-preview');
+                img.src = r.result;
+                img.classList.remove('hidden');
+                document.getElementById('cam-icon').classList.add('hidden');
+            };
+            r.readAsDataURL(e.target.files[0]);
+        }
+
+        window.onload = updateStats;
     </script>
 </body>
 </html>
