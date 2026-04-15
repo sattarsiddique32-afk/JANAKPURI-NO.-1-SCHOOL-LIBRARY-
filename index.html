@@ -2,32 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ISUF PRO | Enterprise Library System</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISUF KING | Library System PRO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* CSS VARIABLES FOR PREMIUM LOOK */
-        :root {
-            --isuf-blue: #2563eb;
-            --isuf-gold: #fbbf24;
-            --isuf-bg: #f8fafc;
-            --sidebar-width: 280px;
-        }
+        :root { --primary: #3b82f6; --gold: #fbbf24; --bg: #f8fafc; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); overflow: hidden; }
 
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--isuf-bg);
-            color: #1e293b;
-            -webkit-tap-highlight-color: transparent;
-            overflow: hidden;
-        }
-
-        /* --- ADVANCED BRANDING ANIMATION --- */
+        /* --- SPARKLING ISUF PROMOTION --- */
         .sparkle-isuf {
             background: linear-gradient(90deg, #1e293b, #3b82f6, #fbbf24, #3b82f6, #1e293b);
             background-size: 200% auto;
@@ -38,529 +24,365 @@
         }
         @keyframes shine { to { background-position: 200% center; } }
 
-        /* --- MOBILE NAVIGATION SYSTEM --- */
-        #sidebar {
-            position: fixed;
-            top: 0;
-            left: calc(-1 * var(--sidebar-width));
-            width: var(--sidebar-width);
-            height: 100%;
-            background: white;
-            z-index: 1001;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 20px 0 50px rgba(0,0,0,0.1);
+        /* --- 3D ANIMATIONS --- */
+        .card-3d { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .card-3d:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 30px 60px -12px rgba(50, 50, 93, 0.25); }
+
+        /* --- SIDEBAR LOGIC --- */
+        #sidebar { transition: all 0.4s ease; z-index: 1000; }
+        @media (max-width: 1024px) {
+            #sidebar { position: fixed; left: -100%; height: 100%; }
+            #sidebar.open { left: 0; }
+            #sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; }
+            #sidebar-overlay.active { display: block; }
         }
 
-        #sidebar.active { left: 0; }
+        .nav-link.active { background: white; color: var(--primary); font-weight: 800; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 
-        #sidebar-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
+        /* Section Visibility */
+        .page-section { display: none; height: calc(100vh - 80px); overflow-y: auto; }
+        .page-section.active { display: block; animation: zoomIn 0.4s ease; }
 
-        #sidebar-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        @media (min-width: 1024px) {
-            #sidebar { left: 0; position: relative; box-shadow: none; }
-            #sidebar-overlay { display: none; }
-            #mobile-nav-toggle { display: none; }
-        }
-
-        /* --- UI COMPONENTS --- */
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem 1.25rem;
-            color: #64748b;
-            border-radius: 12px;
-            transition: all 0.2s ease;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-        }
-
-        .sidebar-link.active {
-            background: #eff6ff;
-            color: var(--isuf-blue);
-            font-weight: 700;
-        }
-
-        .page-section {
-            display: none;
-            height: calc(100vh - 80px);
-            overflow-y: auto;
-            padding: 1.5rem;
-            animation: fadeIn 0.4s ease;
-        }
-
-        .page-section.active { display: block; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* --- IMAGE MODAL --- */
-        #img-modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.9);
-            z-index: 2000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
+        /* Modal */
+        #img-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
         #img-modal.active { display: flex; }
 
-        /* --- TOAST --- */
-        .toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: white;
-            padding: 1rem 1.5rem;
-            border-radius: 16px;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            z-index: 3000;
-            border-left: 4px solid var(--isuf-blue);
-            animation: slideInRight 0.4s ease forwards;
-        }
-
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        /* Form Steps */
-        .step-panel { display: none; }
-        .step-panel.active { display: block; animation: slideStep 0.3s ease; }
-        @keyframes slideStep { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 3000; }
     </style>
 </head>
 <body>
 
-    <div id="sidebar-overlay"></div>
+    <div id="toast-container"></div>
+    <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
+    
     <div id="img-modal" onclick="this.classList.remove('active')">
-        <img id="modal-img-content" src="" class="max-w-full max-h-[80vh] rounded-2xl shadow-2xl animate__animated animate__zoomIn">
+        <img id="modal-img" class="max-w-[90%] max-h-[80vh] rounded-3xl animate__animated animate__zoomIn border-4 border-white/20">
     </div>
 
-    <div class="flex h-screen overflow-hidden">
-        
-        <aside id="sidebar">
-            <div class="p-8 h-full flex flex-col">
-                <div class="text-center mb-10">
-                    <span class="text-5xl block mb-2">👑</span>
-                    <h1 class="sparkle-isuf text-2xl font-black uppercase">Made By ISUF</h1>
-                </div>
+    <div class="flex h-screen">
+        <aside id="sidebar" class="w-72 bg-slate-50 border-r border-slate-200 flex flex-col p-6 shrink-0">
+            <div class="text-center mb-10">
+                <span class="text-6xl block mb-2 animate__animated animate__pulse animate__infinite">👑</span>
+                <h1 class="sparkle-isuf text-2xl font-black uppercase tracking-tighter">Made By ISUF</h1>
+            </div>
 
-                <nav class="flex-grow">
-                    <a href="javascript:void(0)" data-target="dashboard" class="sidebar-link active">
-                        <i class="fas fa-home"></i> Dashboard
-                    </a>
-                    <a href="javascript:void(0)" data-target="add" class="sidebar-link">
-                        <i class="fas fa-plus-circle"></i> Add New Book
-                    </a>
-                    <a href="javascript:void(0)" data-target="issue" class="sidebar-link">
-                        <i class="fas fa-book-reader"></i> Issue Book
-                    </a>
-                    <a href="javascript:void(0)" data-target="records" class="sidebar-link">
-                        <i class="fas fa-clipboard-list"></i> Library Records
-                    </a>
-                </nav>
+            <nav class="space-y-2 flex-grow">
+                <button onclick="showPage('dashboard')" id="nav-dashboard" class="nav-link active w-full flex items-center gap-4 px-6 py-4 text-slate-500 rounded-2xl transition-all"><i class="fas fa-grid-2"></i> Dashboard</button>
+                <button onclick="showPage('add-book')" id="nav-add-book" class="nav-link w-full flex items-center gap-4 px-6 py-4 text-slate-500 rounded-2xl transition-all"><i class="fas fa-plus-circle"></i> Add Book</button>
+                <button onclick="showPage('issue-book')" id="nav-issue-book" class="nav-link w-full flex items-center gap-4 px-6 py-4 text-slate-500 rounded-2xl transition-all"><i class="fas fa-exchange-alt"></i> Issue Book</button>
+                <button onclick="showPage('records')" id="nav-records" class="nav-link w-full flex items-center gap-4 px-6 py-4 text-slate-500 rounded-2xl transition-all"><i class="fas fa-database"></i> Records</button>
+            </nav>
 
-                <div class="mt-auto p-4 bg-slate-900 rounded-2xl text-center">
-                    <p class="text-[10px] text-blue-400 font-bold uppercase tracking-widest">Enterprise System</p>
-                    <p class="text-white text-xs font-black">STABLE V4.0</p>
-                </div>
+            <div class="mt-auto p-6 bg-gradient-to-tr from-blue-600 to-indigo-700 rounded-3xl text-center shadow-xl transform transition-all hover:scale-105">
+                <p class="text-[10px] text-blue-200 font-bold uppercase tracking-widest">Global Developer</p>
+                <p class="text-white text-lg font-black sparkle-isuf">ISUF THE KING</p>
+                <div class="mt-2 text-[8px] text-white/60">© 2026 TOP-TIER SOFTWARE</div>
             </div>
         </aside>
 
-        <div class="flex-1 flex flex-col overflow-hidden">
-            
-            <header class="h-20 bg-white border-b flex items-center justify-between px-6 shrink-0">
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <header class="h-20 bg-white border-b flex items-center justify-between px-8">
                 <div class="flex items-center gap-4">
-                    <button id="mobile-nav-toggle" class="p-2 text-2xl text-slate-800">
-                        <i class="fas fa-bars"></i>
-                    </button>
+                    <button onclick="toggleSidebar()" class="lg:hidden text-2xl text-slate-800"><i class="fas fa-bars"></i></button>
                     <h2 id="header-title" class="text-xs font-black text-slate-400 uppercase tracking-widest">Dashboard</h2>
                 </div>
-                <div class="flex items-center gap-2">
-                    <span class="text-xs font-bold text-slate-600 hidden sm:block">ADMIN PANEL</span>
-                    <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold">I</div>
+                <div class="flex items-center gap-3 bg-slate-50 px-4 py-2 rounded-2xl">
+                    <span class="text-[10px] font-black text-blue-600">ISUF_ADMIN_LOGGED_IN</span>
+                    <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs">👑</div>
                 </div>
             </header>
 
-            <div id="content-parent" class="flex-1">
-                
-                <section id="dashboard" class="page-section active">
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-                        <div class="bg-white p-6 rounded-[2rem] border-b-4 border-blue-600 shadow-sm">
-                            <p class="text-slate-400 text-[10px] font-black uppercase">Total Inventory</p>
-                            <h3 id="stat-total" class="text-3xl font-black">0</h3>
+            <div class="flex-1">
+                <section id="dashboard" class="page-section active p-6 md:p-10">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+                        <div class="card-3d bg-white p-8 rounded-[2.5rem] border-b-8 border-blue-600 shadow-sm">
+                            <p class="text-slate-400 text-xs font-black uppercase mb-1">Total Books</p>
+                            <h3 id="stat-total" class="text-5xl font-black">0</h3>
                         </div>
-                        <div class="bg-white p-6 rounded-[2rem] border-b-4 border-orange-500 shadow-sm">
-                            <p class="text-slate-400 text-[10px] font-black uppercase">Out on Loan</p>
-                            <h3 id="stat-issued" class="text-3xl font-black">0</h3>
+                        <div class="card-3d bg-white p-8 rounded-[2.5rem] border-b-8 border-orange-500 shadow-sm">
+                            <p class="text-slate-400 text-xs font-black uppercase mb-1">Issued</p>
+                            <h3 id="stat-issued" class="text-5xl font-black">0</h3>
                         </div>
-                        <div class="bg-white p-6 rounded-[2rem] border-b-4 border-green-500 shadow-sm">
-                            <p class="text-slate-400 text-[10px] font-black uppercase">On Shelf</p>
-                            <h3 id="stat-avail" class="text-3xl font-black">0</h3>
+                        <div class="card-3d bg-white p-8 rounded-[2.5rem] border-b-8 border-green-500 shadow-sm">
+                            <p class="text-slate-400 text-xs font-black uppercase mb-1">Available</p>
+                            <h3 id="stat-avail" class="text-5xl font-black">0</h3>
                         </div>
                     </div>
 
-                    <div class="bg-slate-900 rounded-[2.5rem] p-8 sm:p-12 text-white relative overflow-hidden shadow-2xl">
-                        <h2 class="text-3xl sm:text-4xl font-black mb-4 sparkle-isuf">ISUF COMMAND CENTER</h2>
-                        <p class="text-slate-400 max-w-lg mb-8 text-sm sm:text-base">This advanced management system facilitates real-time book tracking, inventory control, and student records. Designed for precision and ease of operation.</p>
-                        <div class="flex flex-wrap gap-4">
-                            <span class="px-4 py-2 bg-white/10 rounded-lg text-[10px] font-bold border border-white/20">SQL_LOCAL_ENGINE</span>
-                            <span class="px-4 py-2 bg-blue-600 rounded-lg text-[10px] font-bold">READY</span>
+                    <div class="bg-slate-900 rounded-[3rem] p-12 text-white relative overflow-hidden shadow-2xl">
+                        <div class="relative z-10">
+                            <h2 class="text-5xl font-black mb-4 sparkle-isuf">ISUF COMMAND CENTER</h2>
+                            <p class="text-slate-400 max-w-lg text-lg mb-10">This advanced management system facilitates real-time book tracking, inventory control, and student records. Designed for precision and ease of operation.</p>
+                            <button onclick="showPage('add-book')" class="bg-blue-600 hover:bg-blue-700 px-10 py-5 rounded-2xl font-black uppercase tracking-widest transition-all">Register Asset</button>
                         </div>
-                        <div class="absolute right-[-20px] bottom-[-20px] text-[12rem] opacity-5 rotate-12">👑</div>
+                        <div class="absolute right-[-40px] bottom-[-40px] text-[15rem] opacity-5 rotate-12">👑</div>
                     </div>
                 </section>
 
-                <section id="add" class="page-section max-w-2xl mx-auto">
-                    <div class="bg-white rounded-[2rem] shadow-xl p-8 border">
-                        <h3 class="text-xl font-black uppercase mb-8 text-center tracking-tight">Register New Asset</h3>
-                        <form id="add-book-form" class="space-y-6">
-                            <div class="flex justify-center">
-                                <label class="w-40 h-52 bg-slate-50 border-4 border-dashed border-slate-200 rounded-[2rem] flex flex-col items-center justify-center cursor-pointer relative overflow-hidden">
-                                    <input type="file" id="book-image-input" accept="image/*" capture="environment" class="hidden">
-                                    <div id="upload-prompt" class="text-center">
-                                        <i class="fas fa-camera text-3xl text-slate-300 mb-2"></i>
-                                        <p class="text-[9px] font-black text-slate-400 uppercase">Click to Photo</p>
+                <section id="add-book" class="page-section p-6 md:p-10 max-w-3xl mx-auto">
+                    <div class="bg-white rounded-[3rem] shadow-2xl p-10 border">
+                        <h3 class="text-3xl font-black text-center mb-10 sparkle-isuf">NEW REGISTRATION</h3>
+                        <form id="form-add" class="space-y-6">
+                            <div class="flex justify-center mb-6">
+                                <label class="w-44 h-56 bg-slate-50 border-4 border-dashed border-slate-200 rounded-[2.5rem] flex flex-col items-center justify-center cursor-pointer relative overflow-hidden transition-all hover:bg-slate-100">
+                                    <input type="file" id="inp-img" accept="image/*" capture="environment" class="hidden" onchange="previewImg(this)">
+                                    <div id="cam-prompt" class="text-center">
+                                        <i class="fas fa-camera text-4xl text-slate-300 mb-2"></i>
+                                        <p class="text-[10px] font-black text-slate-400">SNAP COVER</p>
                                     </div>
-                                    <img id="book-preview-img" class="absolute inset-0 w-full h-full object-cover hidden">
+                                    <img id="img-pre" class="absolute inset-0 w-full h-full object-cover hidden">
                                 </label>
                             </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <input type="text" id="book-id-inp" required class="w-full p-4 bg-slate-50 border rounded-xl outline-none focus:border-blue-600 font-bold" placeholder="Book ID Number">
-                                <input type="text" id="book-cat-inp" class="w-full p-4 bg-slate-50 border rounded-xl outline-none focus:border-blue-600 font-bold" placeholder="Subject Category">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <input type="text" id="inp-id" required class="w-full p-5 bg-slate-50 rounded-2xl border-none outline-none focus:ring-4 focus:ring-blue-100 font-bold" placeholder="Book ID Number *">
+                                <input type="text" id="inp-cat" class="w-full p-5 bg-slate-50 rounded-2xl border-none outline-none focus:ring-4 focus:ring-blue-100 font-bold" placeholder="Category (Math/Science)">
                             </div>
-                            <input type="text" id="book-name-inp" class="w-full p-4 bg-slate-50 border rounded-xl outline-none focus:border-blue-600 font-bold" placeholder="Complete Book Title">
-                            <button type="submit" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black tracking-widest hover:bg-black transition-all">SAVE TO DATABASE</button>
+                            <input type="text" id="inp-title" class="w-full p-5 bg-slate-50 rounded-2xl border-none outline-none focus:ring-4 focus:ring-blue-100 font-bold" placeholder="Complete Book Title Name">
+                            <button type="button" onclick="saveBook()" class="w-full bg-slate-900 text-white py-6 rounded-2xl font-black text-lg hover:bg-black shadow-xl">COMMIT TO ARCHIVES</button>
                         </form>
                     </div>
                 </section>
 
-                <section id="issue" class="page-section max-w-xl mx-auto">
-                    <div class="bg-white rounded-[2rem] shadow-2xl overflow-hidden border">
-                        <div class="p-6 bg-slate-50 border-b flex justify-between items-center">
-                            <p id="issue-step-text" class="text-[10px] text-blue-600 font-black uppercase">Phase 01 / 03</p>
-                            <div class="flex gap-1"><div id="d-1" class="w-6 h-1 rounded bg-blue-600"></div><div id="d-2" class="w-6 h-1 rounded bg-slate-200"></div><div id="d-3" class="w-6 h-1 rounded bg-slate-200"></div></div>
+                <section id="issue-book" class="page-section p-6 md:p-10 max-w-2xl mx-auto">
+                    <div class="bg-white rounded-[3rem] shadow-2xl overflow-hidden border">
+                        <div class="p-8 bg-slate-50 border-b flex justify-between items-center">
+                            <p id="step-txt" class="text-xs text-blue-600 font-black">PHASE 01 / 03</p>
+                            <div class="flex gap-1" id="step-dots">
+                                <div class="w-8 h-1.5 rounded-full bg-blue-600"></div>
+                                <div class="w-8 h-1.5 rounded-full bg-slate-200"></div>
+                                <div class="w-8 h-1.5 rounded-full bg-slate-200"></div>
+                            </div>
                         </div>
-                        <form id="issue-form" class="p-8 space-y-8">
-                            <div class="issue-step-panel active" id="s-1">
-                                <h4 class="text-2xl font-black mb-4">Book ID Verification</h4>
-                                <input type="text" id="iss-b-id" class="w-full p-5 bg-slate-50 border-2 rounded-2xl text-2xl font-black outline-none focus:border-blue-600" placeholder="e.g. 101">
+                        <form id="form-issue" class="p-10 space-y-8">
+                            <div id="step-1" class="step-panel active">
+                                <h4 class="text-3xl font-black mb-4">Book Code Verification</h4>
+                                <input type="text" id="iss-b-id" class="w-full p-6 bg-slate-50 rounded-[2rem] text-3xl font-black outline-none border-2 border-transparent focus:border-blue-500" placeholder="e.g. 204">
                             </div>
-                            <div class="issue-step-panel" id="s-2">
-                                <h4 class="text-2xl font-black mb-4">Student ID</h4>
-                                <input type="text" id="iss-s-id" class="w-full p-5 bg-slate-50 border-2 rounded-2xl text-2xl font-black outline-none focus:border-blue-600" placeholder="Roll No...">
+                            <div id="step-2" class="step-panel hidden">
+                                <h4 class="text-3xl font-black mb-4">Student Enrollment</h4>
+                                <input type="text" id="iss-s-id" class="w-full p-6 bg-slate-50 rounded-[2rem] text-3xl font-black outline-none border-2 border-transparent focus:border-blue-500" placeholder="Student ID...">
                             </div>
-                            <div class="issue-step-panel" id="s-3">
-                                <h4 class="text-2xl font-black mb-4">Final Submission</h4>
+                            <div id="step-3" class="step-panel hidden">
+                                <h4 class="text-3xl font-black mb-4">Final Records</h4>
                                 <div class="space-y-4">
-                                    <input type="text" id="iss-s-name" class="w-full p-4 bg-slate-50 border rounded-xl font-bold" placeholder="Full Student Name">
-                                    <input type="text" id="iss-s-class" class="w-full p-4 bg-slate-50 border rounded-xl font-bold" placeholder="Class / Section">
+                                    <input type="text" id="iss-s-name" class="w-full p-5 bg-slate-50 rounded-2xl border-none outline-none font-bold" placeholder="Student Full Name">
+                                    <input type="text" id="iss-s-class" class="w-full p-5 bg-slate-50 rounded-2xl border-none outline-none font-bold" placeholder="Class / Roll No">
                                 </div>
                             </div>
                             <div class="flex justify-between pt-6">
-                                <button type="button" id="iss-prev" class="hidden font-black text-slate-400 uppercase">Back</button>
-                                <button type="button" id="iss-next" class="ml-auto bg-blue-600 text-white px-10 py-4 rounded-xl font-black uppercase shadow-lg">Next</button>
+                                <button type="button" id="btn-prev" onclick="changeStep(-1)" class="hidden font-black text-slate-400 uppercase tracking-widest">Back</button>
+                                <button type="button" id="btn-next" onclick="changeStep(1)" class="ml-auto bg-blue-600 text-white px-12 py-5 rounded-2xl font-black uppercase shadow-xl transition-all active:scale-95">Next</button>
                             </div>
                         </form>
                     </div>
                 </section>
 
-                <section id="records" class="page-section">
-                    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
-                        <h3 class="text-2xl font-black uppercase">System Archives</h3>
-                        <div class="flex bg-slate-100 p-1 rounded-2xl w-full sm:w-auto shadow-inner">
-                            <button id="tab-btn-books" class="flex-1 sm:flex-none px-6 py-3 rounded-xl font-black bg-slate-900 text-white text-xs">Inventory</button>
-                            <button id="tab-btn-issued" class="flex-1 sm:flex-none px-6 py-3 rounded-xl font-black text-slate-500 text-xs">Issued</button>
+                <section id="records" class="page-section p-6 md:p-10">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-6 mb-10">
+                        <h3 class="text-3xl font-black uppercase">Database</h3>
+                        <div class="bg-slate-100 p-1.5 rounded-[2rem] flex w-full md:w-auto shadow-inner">
+                            <button onclick="switchTab('books')" id="tab-b" class="flex-1 px-8 py-4 rounded-2xl font-black bg-slate-900 text-white transition-all">Inventory</button>
+                            <button onclick="switchTab('issued')" id="tab-i" class="flex-1 px-8 py-4 rounded-2xl font-black text-slate-400 transition-all">Issued</button>
                         </div>
                     </div>
-                    <div class="bg-white rounded-[2rem] shadow-sm border overflow-x-auto">
-                        <table class="w-full text-left min-w-[700px]">
-                            <thead class="bg-slate-50/50 text-[10px] font-black uppercase text-slate-400 tracking-widest border-b">
+                    <div class="bg-white rounded-[3rem] shadow-sm border overflow-x-auto">
+                        <table class="w-full text-left min-w-[800px]">
+                            <thead class="bg-slate-50/50 text-[10px] font-black uppercase text-slate-400 border-b">
                                 <tr id="table-head"></tr>
                             </thead>
-                            <tbody id="table-body" class="divide-y divide-slate-50"></tbody>
+                            <tbody id="table-body" class="divide-y divide-slate-100"></tbody>
                         </table>
-                        <div id="no-data" class="hidden py-20 text-center opacity-20 font-black">NO DATA FOUND</div>
                     </div>
                 </section>
-
             </div>
-        </div>
+        </main>
     </div>
 
     <script>
-        /**
-         * ISUF ENTERPRISE LIBRARY ENGINE
-         * Total estimated lines of logic: ~1800-2000 (Functional blocks)
-         */
-
-        // 1. DATA CONTROLLER
-        const Storage = {
-            save(key, data) { localStorage.setItem(`isuf_lib_${key}`, JSON.stringify(data)); },
-            get(key) { return JSON.parse(localStorage.getItem(`isuf_lib_${key}`)) || []; }
+        // --- CORE DATABASE ---
+        const DB = {
+            get(key) { return JSON.parse(localStorage.getItem(`isuf_v5_${key}`)) || []; },
+            set(key, val) { localStorage.setItem(`isuf_v5_${key}`, JSON.stringify(val)); }
         };
 
-        // 2. STATE MANAGER
-        const State = {
-            currentSection: 'dashboard',
-            currentIssueStep: 1,
-            activeTab: 'books',
-            tempImage: null
-        };
+        let tempImg = null;
+        let currentStep = 1;
 
-        // 3. UI ENGINE
-        const UI = {
-            init() {
-                this.bindEvents();
-                this.renderDashboard();
-                console.log("Isuf Engine Initialized...");
-            },
+        // --- NAVIGATION ---
+        function toggleSidebar() {
+            const side = document.getElementById('sidebar');
+            const over = document.getElementById('sidebar-overlay');
+            side.classList.toggle('open');
+            over.classList.toggle('active');
+        }
 
-            bindEvents() {
-                // Sidebar Toggles
-                const menuBtn = document.getElementById('mobile-nav-toggle');
-                const sidebar = document.getElementById('sidebar');
-                const overlay = document.getElementById('sidebar-overlay');
+        function showPage(id) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.getElementById('nav-' + id).classList.add('active');
+            
+            document.getElementById('header-title').innerText = id.toUpperCase();
+            if(window.innerWidth < 1024) toggleSidebar();
+            
+            if(id === 'dashboard') refreshStats();
+            if(id === 'records') switchTab('books');
+        }
 
-                const toggleMenu = () => {
-                    sidebar.classList.toggle('active');
-                    overlay.classList.toggle('active');
-                };
+        // --- NOTIFICATIONS ---
+        function toast(msg, err = false) {
+            const t = document.createElement('div');
+            t.className = `animate__animated animate__fadeInRight p-5 mb-3 rounded-2xl shadow-2xl text-white font-black flex items-center gap-3 ${err?'bg-red-500':'bg-blue-600'}`;
+            t.innerHTML = `👑 ${msg}`;
+            document.getElementById('toast-container').appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
 
-                menuBtn.addEventListener('click', toggleMenu);
-                overlay.addEventListener('click', toggleMenu);
+        // --- BOOK ADD LOGIC ---
+        function previewImg(inp) {
+            const r = new FileReader();
+            r.onload = e => {
+                tempImg = e.target.result;
+                document.getElementById('img-pre').src = tempImg;
+                document.getElementById('img-pre').classList.remove('hidden');
+                document.getElementById('cam-prompt').classList.add('hidden');
+            };
+            if(inp.files[0]) r.readAsDataURL(inp.files[0]);
+        }
 
-                // Navigation Links
-                document.querySelectorAll('.sidebar-link').forEach(link => {
-                    link.addEventListener('click', (e) => {
-                        const target = e.currentTarget.getAttribute('data-target');
-                        this.navigate(target);
-                        if (window.innerWidth < 1024) toggleMenu();
-                    });
-                });
+        function saveBook() {
+            const id = document.getElementById('inp-id').value;
+            const books = DB.get('b');
+            if(!id) return toast("ID Required", true);
+            if(books.find(x => x.id === id)) return toast("Book ID Exists", true);
 
-                // Book Image Upload
-                document.getElementById('book-image-input').addEventListener('change', (e) => {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        State.tempImage = event.target.result;
-                        const pre = document.getElementById('book-preview-img');
-                        pre.src = State.tempImage;
-                        pre.classList.remove('hidden');
-                        document.getElementById('upload-prompt').classList.add('hidden');
-                    };
-                    if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
-                });
+            books.push({
+                id,
+                title: document.getElementById('inp-title').value || 'OFFICIAL RECORD',
+                cat: document.getElementById('inp-cat').value || 'N/A',
+                img: tempImg || ''
+            });
 
-                // Issue Step Logic
-                document.getElementById('iss-next').addEventListener('click', () => this.handleIssueNext());
-                document.getElementById('iss-prev').addEventListener('click', () => this.handleIssuePrev());
+            DB.set('b', books);
+            toast("Book Saved Successfully!");
+            document.getElementById('form-add').reset();
+            document.getElementById('img-pre').classList.add('hidden');
+            document.getElementById('cam-prompt').classList.remove('hidden');
+            tempImg = null;
+            showPage('dashboard');
+        }
 
-                // Tabs
-                document.getElementById('tab-btn-books').addEventListener('click', () => this.switchTab('books'));
-                document.getElementById('tab-btn-issued').addEventListener('click', () => this.switchTab('issued'));
-
-                // Form Submits
-                document.getElementById('add-book-form').addEventListener('submit', (e) => this.handleBookAdd(e));
-            },
-
-            navigate(sectionId) {
-                State.currentSection = sectionId;
-                document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-                document.getElementById(sectionId).classList.add('active');
-
-                document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-                document.querySelector(`[data-target="${sectionId}"]`).classList.add('active');
-                
-                document.getElementById('header-title').innerText = sectionId.toUpperCase();
-
-                if(sectionId === 'dashboard') this.renderDashboard();
-                if(sectionId === 'records') this.renderRecords();
-            },
-
-            toast(msg, isError = false) {
-                const box = document.createElement('div');
-                box.className = `toast animate__animated animate__fadeInRight`;
-                if(isError) box.style.borderLeftColor = '#ef4444';
-                box.innerHTML = `<i class="fas ${isError?'fa-circle-xmark':'fa-circle-check'}"></i> <span class="text-sm font-bold">${msg}</span>`;
-                document.body.appendChild(box);
-                setTimeout(() => box.remove(), 3000);
-            },
-
-            handleBookAdd(e) {
-                e.preventDefault();
-                const books = Storage.get('books');
-                const newId = document.getElementById('book-id-inp').value;
-
-                if(books.find(x => x.id === newId)) return this.toast("ID Already Exists!", true);
-
-                books.push({
-                    id: newId,
-                    title: document.getElementById('book-name-inp').value || 'OFFICIAL RECORD',
-                    cat: document.getElementById('book-cat-inp').value || 'GENERAL',
-                    img: State.tempImage || ''
-                });
-
-                Storage.save('books', books);
-                this.toast("Book Registered Successfully");
-                e.target.reset();
-                document.getElementById('book-preview-img').classList.add('hidden');
-                document.getElementById('upload-prompt').classList.remove('hidden');
-                State.tempImage = null;
-                this.navigate('dashboard');
-            },
-
-            handleIssueNext() {
-                if(State.currentIssueStep < 3) {
-                    if(State.currentIssueStep === 1 && !document.getElementById('iss-b-id').value) return this.toast("Book ID Required", true);
-                    if(State.currentIssueStep === 2 && !document.getElementById('iss-s-id').value) return this.toast("Student ID Required", true);
-                    State.currentIssueStep++;
-                    this.updateIssueUI();
-                } else {
-                    this.finalizeIssue();
-                }
-            },
-
-            handleIssuePrev() {
-                if(State.currentIssueStep > 1) {
-                    State.currentIssueStep--;
-                    this.updateIssueUI();
-                }
-            },
-
-            updateIssueUI() {
-                document.querySelectorAll('.issue-step-panel').forEach(p => p.classList.remove('active'));
-                document.getElementById(`s-${State.currentIssueStep}`).classList.add('active');
-                document.getElementById('iss-prev').classList.toggle('hidden', State.currentIssueStep === 1);
-                document.getElementById('iss-next').innerText = State.currentIssueStep === 3 ? "FINALIZE" : "NEXT";
-                document.getElementById('issue-step-text').innerText = `PHASE 0${State.currentIssueStep} / 03`;
-                
-                for(let i=1; i<=3; i++) {
-                    document.getElementById(`d-${i}`).className = i <= State.currentIssueStep ? 'w-6 h-1 rounded bg-blue-600' : 'w-6 h-1 rounded bg-slate-200';
-                }
-            },
-
-            finalizeIssue() {
-                const books = Storage.get('books');
-                const issued = Storage.get('issued');
-                const bId = document.getElementById('iss-b-id').value;
-                const bookFound = books.find(x => x.id === bId);
-
-                if(!bookFound) return this.toast("Book Not Found!", true);
-                if(issued.find(x => x.bId === bId)) return this.toast("Already Issued!", true);
-
-                issued.push({
-                    bId: bId,
-                    bTitle: bookFound.title,
-                    bImg: bookFound.img,
-                    sId: document.getElementById('iss-s-id').value,
-                    sName: document.getElementById('iss-s-name').value,
-                    sClass: document.getElementById('iss-s-class').value,
-                    date: new Date().toISOString()
-                });
-
-                Storage.save('issued', issued);
-                this.toast("Issue Successful!");
-                document.getElementById('issue-form').reset();
-                State.currentIssueStep = 1;
-                this.updateIssueUI();
-                this.navigate('records');
-            },
-
-            renderDashboard() {
-                const b = Storage.get('books').length;
-                const i = Storage.get('issued').length;
-                document.getElementById('stat-total').innerText = b;
-                document.getElementById('stat-issued').innerText = i;
-                document.getElementById('stat-avail').innerText = b - i;
-            },
-
-            switchTab(tab) {
-                State.activeTab = tab;
-                const isB = tab === 'books';
-                document.getElementById('tab-btn-books').className = isB ? 'flex-1 sm:flex-none px-6 py-3 rounded-xl font-black bg-slate-900 text-white text-xs' : 'flex-1 sm:flex-none px-6 py-3 rounded-xl font-black text-slate-500 text-xs';
-                document.getElementById('tab-btn-issued').className = !isB ? 'flex-1 sm:flex-none px-6 py-3 rounded-xl font-black bg-slate-900 text-white text-xs' : 'flex-1 sm:flex-none px-6 py-3 rounded-xl font-black text-slate-500 text-xs';
-                this.renderRecords();
-            },
-
-            renderRecords() {
-                const head = document.getElementById('table-head');
-                const body = document.getElementById('table-body');
-                body.innerHTML = "";
-
-                if(State.activeTab === 'books') {
-                    head.innerHTML = "<th class='p-6'>Preview</th><th class='p-6'>Information</th><th class='p-6'>Category</th><th class='p-6'>Action</th>";
-                    const data = Storage.get('books');
-                    document.getElementById('no-data').classList.toggle('hidden', data.length > 0);
-                    data.forEach(x => {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td class='p-6'><img src='${x.img||""}' onclick="UI.showImage('${x.img}')" class='w-12 h-16 object-cover rounded-lg bg-slate-100 shadow-sm cursor-zoom-in'></td>
-                            <td class='p-6'><p class='font-black'>${x.title}</p><p class='text-[10px] text-blue-600 font-bold'>ID: ${x.id}</p></td>
-                            <td class='p-6 text-slate-500 font-bold text-xs'>${x.cat}</td>
-                            <td class='p-6'><button onclick="UI.deleteItem('books','${x.id}')" class='text-red-400'><i class='fas fa-trash-alt'></i></button></td>
-                        `;
-                        body.appendChild(tr);
-                    });
-                } else {
-                    head.innerHTML = "<th class='p-6'>Book</th><th class='p-6'>Borrower</th><th class='p-6'>Date Issued</th><th class='p-6'>Action</th>";
-                    const data = Storage.get('issued');
-                    document.getElementById('no-data').classList.toggle('hidden', data.length > 0);
-                    data.forEach(x => {
-                        const diff = Math.floor((new Date() - new Date(x.date)) / (1000*60*60*24));
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td class='p-6'><img src='${x.bImg||""}' onclick="UI.showImage('${x.bImg}')" class='w-12 h-16 object-cover rounded-lg bg-slate-100 shadow-sm cursor-zoom-in'></td>
-                            <td class='p-6'><p class='font-black'>${x.sName}</p><p class='text-[10px] text-slate-400'>Roll: ${x.sId}</p></td>
-                            <td class='p-6'><p class='text-xs font-bold text-blue-600'>${new Date(x.date).toLocaleDateString()}</p><p class='text-[10px] text-orange-500 font-black'>${diff===0?'TODAY':diff+' DAYS AGO'}</p></td>
-                            <td class='p-6'><button onclick="UI.deleteItem('issued','${x.bId}')" class='bg-green-600 text-white px-4 py-2 rounded-lg text-[10px] font-black'>RETURN</button></td>
-                        `;
-                        body.appendChild(tr);
-                    });
-                }
-            },
-
-            showImage(src) {
-                if(!src) return;
-                document.getElementById('modal-img-content').src = src;
-                document.getElementById('img-modal').classList.add('active');
-            },
-
-            deleteItem(key, id) {
-                if(confirm("Confirm action?")) {
-                    let data = Storage.get(key);
-                    data = data.filter(x => (key === 'books' ? x.id : x.bId) !== id);
-                    Storage.save(key, data);
-                    this.renderRecords();
-                    this.toast("Registry Updated");
-                }
+        // --- ISSUE LOGIC ---
+        function changeStep(d) {
+            if(d === 1 && currentStep < 3) {
+                if(currentStep === 1 && !document.getElementById('iss-b-id').value) return toast("Code Required", true);
+                if(currentStep === 2 && !document.getElementById('iss-s-id').value) return toast("Student ID Required", true);
+                currentStep++;
+            } else if (d === -1 && currentStep > 1) {
+                currentStep--;
+            } else if (d === 1 && currentStep === 3) {
+                return finalizeIssue();
             }
-        };
+            updateStepUI();
+        }
 
-        // RUN ENGINE
-        UI.init();
+        function updateStepUI() {
+            for(let i=1; i<=3; i++) {
+                document.getElementById(`step-${i}`).classList.toggle('hidden', i !== currentStep);
+                document.getElementById(`step-${i}`).classList.toggle('active', i === currentStep);
+            }
+            document.getElementById('btn-prev').classList.toggle('hidden', currentStep === 1);
+            document.getElementById('btn-next').innerText = currentStep === 3 ? "FINALIZE" : "NEXT";
+            document.getElementById('step-txt').innerText = `PHASE 0${currentStep} / 03`;
+            const dots = document.getElementById('step-dots').children;
+            for(let i=0; i<3; i++) dots[i].className = i < currentStep ? 'w-8 h-1.5 rounded-full bg-blue-600' : 'w-8 h-1.5 rounded-full bg-slate-200';
+        }
+
+        function finalizeIssue() {
+            const bId = document.getElementById('iss-b-id').value;
+            const books = DB.get('b');
+            const bookData = books.find(x => x.id === bId);
+            
+            if(!bookData) return toast("Book Not in System", true);
+            const issued = DB.get('i');
+            if(issued.find(x => x.bId === bId)) return toast("Already Issued", true);
+
+            issued.push({
+                bId,
+                bImg: bookData.img,
+                sName: document.getElementById('iss-s-name').value,
+                sId: document.getElementById('iss-s-id').value,
+                sClass: document.getElementById('iss-s-class').value,
+                date: new Date().toISOString()
+            });
+
+            DB.set('i', issued);
+            toast("Transaction Success!");
+            document.getElementById('form-issue').reset();
+            currentStep = 1; updateStepUI();
+            showPage('records');
+        }
+
+        // --- RECORDS & TABS ---
+        function switchTab(t) {
+            const isB = t === 'books';
+            document.getElementById('tab-b').className = isB ? 'flex-1 px-8 py-4 rounded-2xl font-black bg-slate-900 text-white transition-all' : 'flex-1 px-8 py-4 rounded-2xl font-black text-slate-400 transition-all';
+            document.getElementById('tab-i').className = !isB ? 'flex-1 px-8 py-4 rounded-2xl font-black bg-slate-900 text-white transition-all' : 'flex-1 px-8 py-4 rounded-2xl font-black text-slate-400 transition-all';
+            
+            const head = document.getElementById('table-head');
+            const body = document.getElementById('table-body');
+            body.innerHTML = "";
+
+            if(isB) {
+                head.innerHTML = "<th class='p-8'>Asset Photo</th><th class='p-8'>Official Identity</th><th class='p-8'>Category</th><th class='p-8'>Action</th>";
+                DB.get('b').forEach(x => {
+                    body.innerHTML += `<tr>
+                        <td class='p-8'><img src='${x.img||""}' onclick="zoomImg('${x.img}')" class='w-14 h-20 object-cover rounded-2xl bg-slate-50 shadow-sm cursor-zoom-in'></td>
+                        <td class='p-8'><p class='font-black text-lg'>${x.title}</p><p class='text-xs font-bold text-blue-500'>ID: ${x.id}</p></td>
+                        <td class='p-8 font-black text-slate-400 uppercase'>${x.cat}</td>
+                        <td class='p-8'><button onclick="del('b','${x.id}')" class='text-red-400'><i class='fas fa-trash-alt'></i></button></td>
+                    </tr>`;
+                });
+            } else {
+                head.innerHTML = "<th class='p-8'>Photo</th><th class='p-8'>Borrower Info</th><th class='p-8'>Duration</th><th class='p-8'>Action</th>";
+                DB.get('i').forEach(x => {
+                    const days = Math.floor((new Date() - new Date(x.date)) / (1000*60*60*24));
+                    body.innerHTML += `<tr>
+                        <td class='p-8'><img src='${x.bImg||""}' onclick="zoomImg('${x.bImg}')" class='w-14 h-20 object-cover rounded-2xl bg-slate-50 shadow-sm cursor-zoom-in'></td>
+                        <td class='p-8'><p class='font-black text-lg'>${x.sName}</p><p class='text-xs font-bold text-blue-500 uppercase'>ID: ${x.sId} | ${x.sClass}</p></td>
+                        <td class='p-8 font-black text-orange-500 text-xs uppercase'>${days===0?'Today':days+' Days Ago'}</td>
+                        <td class='p-8'><button onclick="del('i','${x.bId}')" class='bg-green-600 text-white px-5 py-2 rounded-xl text-[10px] font-black'>RETURN</button></td>
+                    </tr>`;
+                });
+            }
+        }
+
+        function zoomImg(src) {
+            if(!src) return;
+            document.getElementById('modal-img').src = src;
+            document.getElementById('img-modal').classList.add('active');
+        }
+
+        function del(k, id) {
+            if(confirm("Confirm action?")) {
+                let data = DB.get(k);
+                data = data.filter(x => (k === 'b' ? x.id : x.bId) !== id);
+                DB.set(k, data);
+                switchTab(k === 'b' ? 'books' : 'issued');
+                toast("Database Updated", true);
+            }
+        }
+
+        function refreshStats() {
+            const b = DB.get('b').length;
+            const i = DB.get('i').length;
+            document.getElementById('stat-total').innerText = b;
+            document.getElementById('stat-issued').innerText = i;
+            document.getElementById('stat-avail').innerText = b - i;
+        }
+
+        window.onload = refreshStats;
     </script>
 </body>
 </html>
