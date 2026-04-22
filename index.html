@@ -1,431 +1,556 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LIBRA | Enterprise Management System</title>
+    <title>ISUF | ENTERPRISE LIBRARY ERP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
     <style>
-        :root[data-theme="dark"] {
-            --bg-main: #0f172a;
-            --bg-side: #1e293b;
-            --card-bg: rgba(30, 41, 59, 0.7);
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --border: rgba(255, 255, 255, 0.1);
-            --accent: #38bdf8;
-            --input-bg: #0f172a;
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+        
+        :root {
+            --primary: #0ea5e9;
+            --dark-bg: #020617;
+            --card-bg: #0f172a;
         }
-
-        :root[data-theme="light"] {
-            --bg-main: #f1f5f9;
-            --bg-side: #ffffff;
-            --card-bg: #ffffff;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --border: #e2e8f0;
-            --accent: #0284c7;
-            --input-bg: #f8fafc;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; transition: background 0.3s, color 0.3s; }
 
         body {
-            background-color: var(--bg-main);
-            color: var(--text-primary);
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            min-height: 100vh;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--dark-bg);
+            color: #f1f5f9;
+            overflow-x: hidden;
         }
 
-        /* --- Sidebar --- */
-        aside {
-            background: var(--bg-side);
-            border-right: 1px solid var(--border);
-            padding: 2rem 1.5rem;
-            display: flex;
-            flex-direction: column;
+        .glass {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .logo { font-size: 1.5rem; font-weight: 800; color: var(--accent); margin-bottom: 2.5rem; display: flex; align-items: center; gap: 10px; }
-
-        .nav-link {
-            padding: 12px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-bottom: 0.5rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .isuf-glow {
+            text-shadow: 0 0 20px rgba(14, 165, 233, 0.8);
+            animation: pulse-glow 2s infinite;
         }
 
-        .nav-link:hover, .nav-link.active {
-            background: var(--accent);
-            color: white;
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
 
-        /* --- Header & Controls --- */
-        header {
-            padding: 1.5rem 3rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
+        .sidebar-link.active {
+            background: linear-gradient(90deg, rgba(14, 165, 233, 0.2) 0%, transparent 100%);
+            border-left: 4px solid var(--primary);
+            color: var(--primary);
         }
 
-        .theme-toggle {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            font-weight: 600;
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--dark-bg); }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+
+        .btn-isuf {
+            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        /* --- Content Areas --- */
-        main { padding: 2rem 3rem; overflow-y: auto; }
-
-        .section { display: none; animation: fadeIn 0.3s ease; }
-        .section.active { display: block; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 3rem;
+        .btn-isuf:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(14, 165, 233, 0.5);
         }
-
-        .stat-card {
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-        }
-
-        .stat-card h3 { font-size: 0.85rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.05em; }
-        .stat-card p { font-size: 2.5rem; font-weight: 700; margin-top: 0.5rem; color: var(--accent); }
-
-        /* --- Forms & Tables --- */
-        .admin-card {
-            background: var(--card-bg);
-            padding: 2.5rem;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-        }
-
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-
-        .form-group { margin-bottom: 1.5rem; }
-        label { display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; }
-        
-        input, select {
-            width: 100%;
-            padding: 12px 16px;
-            background: var(--input-bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text-primary);
-            outline: none;
-        }
-
-        input:focus { border-color: var(--accent); }
-
-        .btn {
-            background: var(--accent);
-            color: white;
-            padding: 12px 28px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
-
-        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-        th { text-align: left; padding: 1rem; color: var(--text-secondary); border-bottom: 2px solid var(--border); }
-        td { padding: 1rem; border-bottom: 1px solid var(--border); }
-
-        .img-preview { 
-            width: 100%; height: 250px; 
-            border: 2px dashed var(--border); 
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            overflow: hidden; margin-bottom: 1rem;
-        }
-        .img-preview img { width: 100%; height: 100%; object-fit: cover; }
-
-        #toast {
-            position: fixed; top: 20px; right: 20px;
-            padding: 1rem 2rem; border-radius: 8px;
-            background: #22c55e; color: white;
-            transform: translateX(150%); transition: 0.4s; z-index: 9999;
-        }
-
-        .badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
-        .avail { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
-        .out { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
-
     </style>
 </head>
-<body>
+<body class="min-h-screen flex">
 
-    <aside>
-        <div class="logo"><span>📘</span> LIBRA PRO</div>
-        <nav>
-            <div class="nav-link active" onclick="nav('db')">Dashboard Overview</div>
-            <div class="nav-link" onclick="nav('add')">Inventory Manager</div>
-            <div class="nav-link" onclick="nav('issue')">Issuance Desk</div>
-            <div class="nav-link" onclick="nav('logs')">System Records</div>
+    <aside class="w-72 glass h-screen sticky top-0 flex flex-col z-50">
+        <div class="p-8">
+            <h1 class="text-2xl font-extrabold tracking-tighter isuf-glow text-sky-500">
+                ISUF <span class="text-white">ERP</span>
+            </h1>
+            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em]">Professional Programmer Edition</p>
+        </div>
+
+        <nav class="flex-1 px-4 space-y-2">
+            <button onclick="switchTab('dashboard')" class="sidebar-link active w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all" id="btn-dashboard">
+                <i data-lucide="layout-dashboard"></i> Dashboard
+            </button>
+            <button onclick="switchTab('inventory')" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all" id="btn-inventory">
+                <i data-lucide="book-open"></i> Inventory Mgmt
+            </button>
+            <button onclick="switchTab('issue')" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all" id="btn-issue">
+                <i data-lucide="arrow-up-right"></i> Issue Terminal
+            </button>
+            <button onclick="switchTab('records')" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all" id="btn-records">
+                <i data-lucide="database"></i> System Logs
+            </button>
+            <button onclick="switchTab('analytics')" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all" id="btn-analytics">
+                <i data-lucide="bar-chart-3"></i> Advanced Analytics
+            </button>
         </nav>
-        <div style="margin-top: auto; padding-top: 2rem; border-top: 1px solid var(--border);">
-            <div style="font-size: 0.8rem; color: var(--text-secondary);">Logged in as Admin</div>
-            <div style="font-weight: bold; font-size: 0.9rem;">ISUF Professional</div>
+
+        <div class="p-6 border-t border-white/5">
+            <div class="flex items-center gap-3 p-3 bg-white/5 rounded-xl">
+                <div class="w-10 h-10 rounded-full bg-sky-500 flex items-center justify-center font-bold text-white">I</div>
+                <div>
+                    <p class="text-sm font-bold">Isuf</p>
+                    <p class="text-xs text-slate-500">System Architect</p>
+                </div>
+            </div>
         </div>
     </aside>
 
-    <div style="display: flex; flex-direction: column;">
-        <header>
-            <h2 id="view-title">Dashboard Overview</h2>
-            <button class="theme-toggle" onclick="toggleTheme()">🌓 TOGGLE THEME</button>
+    <main class="flex-1 flex flex-col h-screen overflow-y-auto">
+        
+        <header class="h-20 border-b border-white/5 flex items-center justify-between px-10 glass sticky top-0 z-40">
+            <div class="flex items-center gap-4">
+                <span class="bg-sky-500/10 text-sky-500 px-3 py-1 rounded-full text-xs font-bold border border-sky-500/20">SYSTEM STABLE</span>
+                <span id="live-clock" class="text-slate-400 font-mono text-sm"></span>
+            </div>
+            <div class="flex items-center gap-6">
+                <div class="relative">
+                    <i data-lucide="bell" class="text-slate-400 cursor-pointer"></i>
+                    <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                </div>
+                <button onclick="exportFullData()" class="text-xs font-bold border border-white/10 px-4 py-2 rounded-lg hover:bg-white/5">BACKUP DATABASE</button>
+            </div>
         </header>
 
-        <main>
-            <section id="db" class="section active">
-                <div class="dashboard-grid">
-                    <div class="stat-card"><h3>Total Catalog</h3><p id="t-total">0</p></div>
-                    <div class="stat-card"><h3>Active Loans</h3><p id="t-issued">0</p></div>
-                    <div class="stat-card"><h3>Shelf Availability</h3><p id="t-avail">0</p></div>
+        <div class="p-10 space-y-10">
+
+            <section id="tab-dashboard" class="tab-content">
+                <div class="flex justify-between items-end mb-8">
+                    <div>
+                        <h2 class="text-4xl font-extrabold">System Overview</h2>
+                        <p class="text-slate-400">Real-time telemetry and resource distribution</p>
+                    </div>
                 </div>
-                <div class="admin-card">
-                    <h3>Quick System Status</h3>
-                    <div id="status-msg" style="margin-top: 1rem; color: var(--text-secondary);">All systems operational. Ready for input.</div>
+
+                <div class="grid grid-cols-4 gap-6">
+                    <div class="glass p-6 rounded-2xl">
+                        <div class="flex justify-between mb-4">
+                            <i data-lucide="layers" class="text-sky-500"></i>
+                            <span class="text-[10px] font-bold text-green-500">+12%</span>
+                        </div>
+                        <p class="text-slate-400 text-sm font-bold uppercase tracking-wider">Total Assets</p>
+                        <h3 class="text-3xl font-bold mt-1" id="stat-total">0</h3>
+                    </div>
+                    <div class="glass p-6 rounded-2xl">
+                        <div class="flex justify-between mb-4">
+                            <i data-lucide="external-link" class="text-orange-500"></i>
+                        </div>
+                        <p class="text-slate-400 text-sm font-bold uppercase tracking-wider">Out on Loan</p>
+                        <h3 class="text-3xl font-bold mt-1" id="stat-issued">0</h3>
+                    </div>
+                    <div class="glass p-6 rounded-2xl">
+                        <div class="flex justify-between mb-4">
+                            <i data-lucide="check-circle" class="text-green-500"></i>
+                        </div>
+                        <p class="text-slate-400 text-sm font-bold uppercase tracking-wider">Available</p>
+                        <h3 class="text-3xl font-bold mt-1 text-green-400" id="stat-avail">0</h3>
+                    </div>
+                    <div class="glass p-6 rounded-2xl">
+                        <div class="flex justify-between mb-4">
+                            <i data-lucide="users" class="text-purple-500"></i>
+                        </div>
+                        <p class="text-slate-400 text-sm font-bold uppercase tracking-wider">Active Members</p>
+                        <h3 class="text-3xl font-bold mt-1" id="stat-users">0</h3>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-6 mt-6">
+                    <div class="col-span-2 glass p-8 rounded-3xl">
+                        <h4 class="font-bold mb-6 flex items-center gap-2">
+                            <i data-lucide="trending-up" class="text-sky-500"></i> Usage Velocity
+                        </h4>
+                        <canvas id="mainChart" height="150"></canvas>
+                    </div>
+                    <div class="glass p-8 rounded-3xl">
+                        <h4 class="font-bold mb-6">Category Distribution</h4>
+                        <canvas id="pieChart"></canvas>
+                    </div>
                 </div>
             </section>
 
-            <section id="add" class="section">
-                <div class="admin-card">
-                    <div class="grid-2">
-                        <div>
-                            <div class="form-group">
-                                <label>Book ID (Serial)</label>
-                                <input type="text" id="b-id" placeholder="Ex: LIB-9982">
+            <section id="tab-inventory" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-4xl font-extrabold">Asset Registration</h2>
+                </div>
+                <div class="grid grid-cols-3 gap-8">
+                    <div class="col-span-1 space-y-6">
+                        <div class="glass p-8 rounded-3xl space-y-4">
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-500 uppercase">Universal Book ID</label>
+                                <input type="text" id="b-id" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 mt-1 focus:border-sky-500 outline-none" placeholder="UID-001">
                             </div>
-                            <div class="form-group">
-                                <label>Full Title</label>
-                                <input type="text" id="b-title" placeholder="Advanced Engineering Mathematics">
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-500 uppercase">Asset Title</label>
+                                <input type="text" id="b-title" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 mt-1 focus:border-sky-500 outline-none" placeholder="Quantum Physics Vol 1">
                             </div>
-                            <div class="form-group">
-                                <label>Asset Classification</label>
-                                <select id="b-cat">
-                                    <option>Reference</option>
-                                    <option>Textbook</option>
-                                    <option>Periodical</option>
-                                    <option>Fiction</option>
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-500 uppercase">Classification</label>
+                                <select id="b-cat" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 mt-1 focus:border-sky-500 outline-none">
+                                    <option value="Tech">Technology</option>
+                                    <option value="Science">Pure Science</option>
+                                    <option value="Arts">Fine Arts</option>
+                                    <option value="Law">Jurisprudence</option>
                                 </select>
                             </div>
-                            <button class="btn" onclick="addAsset()">REGISTER ASSET</button>
+                            <button onclick="addAsset()" class="w-full btn-isuf py-4 rounded-xl font-bold uppercase tracking-widest text-sm">Deploy to Catalog</button>
                         </div>
-                        <div>
-                            <label>Asset Visualization</label>
-                            <div class="img-preview" id="preview-area">No Image Captured</div>
-                            <div style="display:flex; gap: 10px;">
-                                <button class="btn" style="flex:1; background: #64748b;" onclick="document.getElementById('f-up').click()">Upload</button>
-                                <button class="btn" style="flex:1; background: #64748b;" onclick="startCam()">Camera</button>
+                    </div>
+                    <div class="col-span-2 glass p-8 rounded-3xl">
+                        <div class="flex justify-between items-center mb-6">
+                            <h4 class="font-bold">Media Acquisition</h4>
+                            <div class="flex gap-2">
+                                <button onclick="startCamera()" class="p-2 bg-white/5 rounded-lg hover:bg-white/10"><i data-lucide="camera"></i></button>
+                                <button onclick="document.getElementById('f-up').click()" class="p-2 bg-white/5 rounded-lg hover:bg-white/10"><i data-lucide="upload"></i></button>
                             </div>
-                            <input type="file" id="f-up" hidden accept="image/*" onchange="handleFile(this)">
+                        </div>
+                        <div id="preview-box" class="w-full h-80 rounded-2xl bg-black/40 border-2 border-dashed border-white/10 flex items-center justify-center overflow-hidden">
+                            <p class="text-slate-500 font-bold">NO MEDIA CAPTURED</p>
+                        </div>
+                        <input type="file" id="f-up" class="hidden" accept="image/*" onchange="handleFile(this)">
+                        <div id="cam-controls" class="hidden mt-4 flex gap-4">
+                            <button onclick="snap()" class="flex-1 bg-green-500/20 text-green-500 py-3 rounded-xl font-bold border border-green-500/20">CAPTURE FRAME</button>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section id="issue" class="section">
-                <div class="admin-card">
-                    <div class="grid-2">
-                        <div class="form-group">
-                            <label>Book ID</label>
-                            <input type="text" id="i-id" placeholder="Enter ID to Scan...">
+            <section id="tab-issue" class="tab-content hidden">
+                <h2 class="text-4xl font-extrabold mb-8">Loan Authorization Terminal</h2>
+                <div class="max-w-4xl glass p-10 rounded-[40px] mx-auto border-t-4 border-t-sky-500">
+                    <div class="grid grid-cols-2 gap-10">
+                        <div class="space-y-6">
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-500 uppercase">Verify Asset ID</label>
+                                <input type="text" id="i-id" class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 mt-2 focus:ring-2 ring-sky-500/20 outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-500 uppercase">Recipient Full Name</label>
+                                <input type="text" id="i-name" class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 mt-2 outline-none">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Student Name</label>
-                            <input type="text" id="i-name" placeholder="Full Legal Name">
+                        <div class="space-y-6">
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-500 uppercase">Student Registration ID</label>
+                                <input type="text" id="i-sid" class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 mt-2 outline-none">
+                            </div>
+                            <div class="pt-6">
+                                <button onclick="processLoan()" class="w-full btn-isuf h-full rounded-2xl font-black text-lg">EXECUTE AUTHORIZATION</button>
+                            </div>
                         </div>
                     </div>
-                    <button class="btn" onclick="issueAsset()">AUTHORIZE LOAN</button>
                 </div>
             </section>
 
-            <section id="logs" class="section">
-                <div class="admin-card">
-                    <div style="display:flex; justify-content: space-between; margin-bottom: 2rem;">
-                        <input type="text" style="max-width: 300px;" placeholder="Filter Records..." onkeyup="filterTable(this)">
-                    </div>
-                    <table id="main-table">
-                        <thead>
+            <section id="tab-records" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-4xl font-extrabold">Master Database</h2>
+                    <input type="text" onkeyup="filter(this)" placeholder="Filter logic..." class="bg-white/5 border border-white/10 rounded-xl px-6 py-3 w-80 outline-none focus:border-sky-500">
+                </div>
+                <div class="glass rounded-[32px] overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead class="bg-white/5">
                             <tr>
-                                <th>Asset</th>
-                                <th>Book ID</th>
-                                <th>Category</th>
-                                <th>Status / Holder</th>
-                                <th>Action</th>
+                                <th class="p-6 text-xs font-bold uppercase text-slate-400">Asset Detail</th>
+                                <th class="p-6 text-xs font-bold uppercase text-slate-400">Inventory ID</th>
+                                <th class="p-6 text-xs font-bold uppercase text-slate-400">Deployment Status</th>
+                                <th class="p-6 text-xs font-bold uppercase text-slate-400">Current Holder</th>
+                                <th class="p-6 text-xs font-bold uppercase text-slate-400 text-right">Administrative</th>
                             </tr>
                         </thead>
-                        <tbody id="table-body"></tbody>
+                        <tbody id="master-table"></tbody>
                     </table>
                 </div>
             </section>
-        </main>
+
+        </div>
+
+        <footer class="mt-auto p-10 border-t border-white/5 flex justify-between items-center bg-black/20">
+            <div>
+                <p class="text-slate-400 text-xs font-bold">ENGINEERED BY</p>
+                <h3 class="font-black text-xl tracking-tighter text-white">ISUF – PROFESSIONAL PROGRAMMER</h3>
+            </div>
+            <div class="flex gap-8">
+                <div class="text-right">
+                    <p class="text-[10px] text-slate-500 font-bold uppercase">System Uptime</p>
+                    <p class="font-mono text-sky-500">99.99%</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-[10px] text-slate-500 font-bold uppercase">Version</p>
+                    <p class="font-mono text-white">4.0.0-PRO</p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <div id="notifier" class="fixed top-10 right-10 z-[100] transform translate-x-[150%] transition-transform duration-500">
+        <div class="glass p-6 rounded-2xl border-l-4 border-l-sky-500 shadow-2xl flex items-center gap-4">
+            <div id="notify-icon" class="w-10 h-10 rounded-full bg-sky-500/20 flex items-center justify-center text-sky-500">
+                <i data-lucide="info"></i>
+            </div>
+            <div>
+                <p id="notify-msg" class="font-bold">System Updated</p>
+                <p class="text-xs text-slate-500">Operation confirmed by ISUF kernel.</p>
+            </div>
+        </div>
     </div>
 
-    <div id="toast">Operation Successful</div>
-
     <script>
-        let db = JSON.parse(localStorage.getItem('libra_db')) || { books: [], issued: [] };
-        let currentImg = "";
+        // --- DATA ARCHITECTURE ---
+        let storage = JSON.parse(localStorage.getItem('isuf_pro_db')) || {
+            books: [],
+            loans: [],
+            stats: { total: 0, out: 0, unique_users: new Set() }
+        };
 
-        function save() { 
-            localStorage.setItem('libra_db', JSON.stringify(db)); 
-            render();
-            updateStats();
+        let currentMedia = "";
+        let mainChart, pieChart;
+
+        // --- CORE ENGINE ---
+        function init() {
+            lucide.createIcons();
+            updateClock();
+            setInterval(updateClock, 1000);
+            refreshUI();
+            initCharts();
         }
 
-        function toggleTheme() {
-            const html = document.documentElement;
-            html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('live-clock').innerText = now.toLocaleString('en-US', { 
+                hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit',
+                day: 'numeric', month: 'short', year: 'numeric'
+            });
         }
 
-        function nav(id) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            event.currentTarget.classList.add('active');
-            document.getElementById('view-title').innerText = event.currentTarget.innerText;
+        function refreshUI() {
+            renderTable();
+            renderStats();
+            if(mainChart) updateCharts();
         }
 
-        function toast(msg, err=false) {
-            const t = document.getElementById('toast');
-            t.innerText = msg;
-            t.style.background = err ? "#ef4444" : "#22c55e";
-            t.style.transform = "translateX(0)";
-            setTimeout(() => t.style.transform = "translateX(150%)", 3000);
+        function save() {
+            localStorage.setItem('isuf_pro_db', JSON.stringify(storage));
+            refreshUI();
         }
 
+        // --- NAVIGATION ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            document.getElementById('btn-' + tabId).classList.add('active');
+        }
+
+        // --- ASSET MANAGEMENT ---
+        function addAsset() {
+            const id = document.getElementById('b-id').value.trim();
+            const title = document.getElementById('b-title').value.trim();
+            const cat = document.getElementById('b-cat').value;
+
+            if(!id || !title) return notify("Error: Missing Required Metadata", true);
+            if(storage.books.find(b => b.id === id)) return notify("Conflict: Duplicate ID detected", true);
+
+            storage.books.push({
+                id, title, cat, 
+                img: currentMedia,
+                status: 'available',
+                created: new Date().toISOString()
+            });
+
+            save();
+            notify("Asset successfully deployed to master catalog");
+            
+            // Reset
+            document.getElementById('b-id').value = '';
+            document.getElementById('b-title').value = '';
+            document.getElementById('preview-box').innerHTML = '<p class="text-slate-500 font-bold">NO MEDIA CAPTURED</p>';
+            currentMedia = "";
+        }
+
+        function processLoan() {
+            const bId = document.getElementById('i-id').value.trim();
+            const name = document.getElementById('i-name').value.trim();
+            const sid = document.getElementById('i-sid').value.trim();
+
+            const book = storage.books.find(b => b.id === bId);
+            if(!book) return notify("Fault: Invalid Asset ID", true);
+            if(book.status === 'loaned') return notify("Conflict: Asset currently in use", true);
+            if(!name || !sid) return notify("Validation: Identity parameters missing", true);
+
+            book.status = 'loaned';
+            storage.loans.push({ bId, name, sid, date: new Date().toISOString() });
+            
+            save();
+            notify(`Loan Authorized: ${bId} → ${name}`);
+            
+            document.getElementById('i-id').value = '';
+            document.getElementById('i-name').value = '';
+            document.getElementById('i-sid').value = '';
+        }
+
+        function returnAsset(id) {
+            const book = storage.books.find(b => b.id === id);
+            if(book) book.status = 'available';
+            storage.loans = storage.loans.filter(l => l.bId !== id);
+            save();
+            notify("Inventory Restored: Asset returned to shelf");
+        }
+
+        function deleteAsset(id) {
+            if(!confirm("CRITICAL: Permanent deletion will erase all metadata. Continue?")) return;
+            storage.books = storage.books.filter(b => b.id !== id);
+            storage.loans = storage.loans.filter(l => l.bId !== id);
+            save();
+            notify("Record Purged from System Memory", true);
+        }
+
+        // --- MEDIA ENGINE ---
         function handleFile(input) {
             const reader = new FileReader();
             reader.onload = (e) => {
-                currentImg = e.target.result;
-                document.getElementById('preview-area').innerHTML = `<img src="${currentImg}">`;
+                currentMedia = e.target.result;
+                document.getElementById('preview-box').innerHTML = `<img src="${currentMedia}" class="w-full h-full object-cover">`;
             };
             reader.readAsDataURL(input.files[0]);
         }
 
-        async function startCam() {
+        let streamObj = null;
+        async function startCamera() {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                const video = document.createElement('video');
-                video.srcObject = stream;
-                video.play();
-                document.getElementById('preview-area').innerHTML = '';
-                document.getElementById('preview-area').appendChild(video);
-                video.onclick = () => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-                    canvas.getContext('2d').drawImage(video, 0,0);
-                    currentImg = canvas.toDataURL('image/jpeg');
-                    document.getElementById('preview-area').innerHTML = `<img src="${currentImg}">`;
-                    stream.getTracks().forEach(t => t.stop());
-                };
-                toast("Click video to capture");
-            } catch(e) { toast("Camera Access Denied", true); }
+                streamObj = await navigator.mediaDevices.getUserMedia({ video: true });
+                const v = document.createElement('video');
+                v.srcObject = streamObj;
+                v.play();
+                v.className = "w-full h-full object-cover";
+                const box = document.getElementById('preview-box');
+                box.innerHTML = '';
+                box.appendChild(v);
+                document.getElementById('cam-controls').classList.remove('hidden');
+            } catch(e) { notify("Camera Hardware Access Denied", true); }
         }
 
-        function addAsset() {
-            const id = document.getElementById('b-id').value;
-            const title = document.getElementById('b-title').value;
-            if(!id || !title) return toast("ID and Title required", true);
-            if(db.books.find(b => b.id === id)) return toast("ID already exists", true);
-
-            db.books.push({ id, title, cat: document.getElementById('b-cat').value, img: currentImg, status: 'avail' });
-            save();
-            toast("Asset Registered");
-            document.getElementById('b-id').value = ''; document.getElementById('b-title').value = '';
+        function snap() {
+            const video = document.querySelector('video');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            currentMedia = canvas.toDataURL('image/jpeg');
+            document.getElementById('preview-box').innerHTML = `<img src="${currentMedia}" class="w-full h-full object-cover">`;
+            if(streamObj) streamObj.getTracks().forEach(t => t.stop());
+            document.getElementById('cam-controls').classList.add('hidden');
         }
 
-        function issueAsset() {
-            const id = document.getElementById('i-id').value;
-            const name = document.getElementById('i-name').value;
-            const book = db.books.find(b => b.id === id);
-
-            if(!book || book.status === 'out') return toast("Asset Unavailable or Invalid", true);
-            if(!name) return toast("Holder Name Required", true);
-
-            book.status = 'out';
-            db.issued.push({ id, name, date: new Date().toLocaleDateString() });
-            save();
-            toast("Asset Loaned Successfully");
-            document.getElementById('i-id').value = ''; document.getElementById('i-name').value = '';
-        }
-
-        function returnAsset(id) {
-            const book = db.books.find(b => b.id === id);
-            book.status = 'avail';
-            db.issued = db.issued.filter(i => i.id !== id);
-            save();
-            toast("Asset Returned");
-        }
-
-        function deleteAsset(id) {
-            if(!confirm("Permenantly delete this record?")) return;
-            db.books = db.books.filter(b => b.id !== id);
-            db.issued = db.issued.filter(i => i.id !== id);
-            save();
-        }
-
-        function render() {
-            const tbody = document.getElementById('table-body');
-            tbody.innerHTML = db.books.map(b => {
-                const issueData = db.issued.find(i => i.id === b.id);
+        // --- UI RENDERING ---
+        function renderTable() {
+            const body = document.getElementById('master-table');
+            body.innerHTML = storage.books.map(b => {
+                const loan = storage.loans.find(l => l.bId === b.id);
                 return `
-                    <tr>
-                        <td><img src="${b.img || ''}" style="width:40px; height:50px; background:#334155; border-radius:4px; object-fit:cover;"> ${b.title}</td>
-                        <td><code>${b.id}</code></td>
-                        <td>${b.cat}</td>
-                        <td>
-                            <span class="badge ${b.status === 'avail' ? 'avail' : 'out'}">
-                                ${b.status === 'avail' ? 'ON SHELF' : 'LOANED: ' + issueData.name}
+                    <tr class="border-b border-white/5 hover:bg-white/5 transition-colors group">
+                        <td class="p-6">
+                            <div class="flex items-center gap-4">
+                                <img src="${b.img || 'https://via.placeholder.com/40x50'}" class="w-10 h-12 rounded bg-slate-800 object-cover shadow-xl">
+                                <div>
+                                    <p class="font-bold">${b.title}</p>
+                                    <p class="text-[10px] text-slate-500 uppercase">${b.cat}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="p-6 font-mono text-sky-500 font-bold text-sm">${b.id}</td>
+                        <td class="p-6">
+                            <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter ${b.status === 'available' ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}">
+                                ${b.status}
                             </span>
                         </td>
-                        <td>
-                            ${b.status === 'out' ? `<button class="btn" style="padding:4px 10px; background:#10b981;" onclick="returnAsset('${b.id}')">Return</button>` : ''}
-                            <button class="btn" style="padding:4px 10px; background:#ef4444;" onclick="deleteAsset('${b.id}')">Del</button>
+                        <td class="p-6 text-sm text-slate-400">
+                            ${loan ? `<span class="text-white font-bold">${loan.name}</span> <br><small>${loan.sid}</small>` : 'System Storage'}
+                        </td>
+                        <td class="p-6 text-right space-x-2">
+                            ${b.status === 'loaned' ? `<button onclick="returnAsset('${b.id}')" class="text-green-500 hover:bg-green-500/10 p-2 rounded-lg transition-all"><i data-lucide="rotate-ccw" class="w-4 h-4"></i></button>` : ''}
+                            <button onclick="deleteAsset('${b.id}')" class="text-red-500 hover:bg-red-500/10 p-2 rounded-lg transition-all"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </td>
                     </tr>
                 `;
             }).join('');
+            lucide.createIcons();
         }
 
-        function updateStats() {
-            document.getElementById('t-total').innerText = db.books.length;
-            document.getElementById('t-issued').innerText = db.issued.length;
-            document.getElementById('t-avail').innerText = db.books.length - db.issued.length;
+        function renderStats() {
+            document.getElementById('stat-total').innerText = storage.books.length;
+            document.getElementById('stat-issued').innerText = storage.loans.length;
+            document.getElementById('stat-avail').innerText = storage.books.length - storage.loans.length;
+            
+            const uniqueUsers = new Set(storage.loans.map(l => l.sid)).size;
+            document.getElementById('stat-users').innerText = uniqueUsers;
         }
 
-        function filterTable(input) {
-            const val = input.value.toLowerCase();
-            document.querySelectorAll('#table-body tr').forEach(tr => {
-                tr.style.display = tr.innerText.toLowerCase().includes(val) ? '' : 'none';
+        function notify(msg, isErr = false) {
+            const el = document.getElementById('notifier');
+            const icon = document.getElementById('notify-icon');
+            document.getElementById('notify-msg').innerText = msg;
+            
+            if(isErr) {
+                icon.className = "w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center text-red-500";
+            } else {
+                icon.className = "w-10 h-10 rounded-full bg-sky-500/20 flex items-center justify-center text-sky-500";
+            }
+
+            el.style.transform = "translateX(0)";
+            setTimeout(() => el.style.transform = "translateX(150%)", 4000);
+        }
+
+        // --- ANALYTICS ENGINE ---
+        function initCharts() {
+            const ctx1 = document.getElementById('mainChart').getContext('2d');
+            mainChart = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: ['00h', '04h', '08h', '12h', '16h', '20h', '24h'],
+                    datasets: [{
+                        label: 'System Traffic',
+                        data: [12, 19, 3, 5, 2, 3, 9],
+                        borderColor: '#0ea5e9',
+                        tension: 0.4,
+                        fill: true,
+                        backgroundColor: 'rgba(14, 165, 233, 0.1)'
+                    }]
+                },
+                options: { 
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { display: false }, x: { grid: { display: false } } }
+                }
+            });
+
+            const ctx2 = document.getElementById('pieChart').getContext('2d');
+            pieChart = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Tech', 'Science', 'Arts', 'Law'],
+                    datasets: [{
+                        data: [40, 20, 10, 30],
+                        backgroundColor: ['#0ea5e9', '#22c55e', '#f59e0b', '#a855f7'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { cutout: '80%', plugins: { legend: { position: 'bottom' } } }
             });
         }
 
-        render();
-        updateStats();
+        function updateCharts() {
+            const cats = ['Tech', 'Science', 'Arts', 'Law'];
+            const counts = cats.map(c => storage.books.filter(b => b.cat === c).length);
+            pieChart.data.datasets[0].data = counts;
+            pieChart.update();
+        }
+
+        init();
     </script>
 </body>
 </html>
