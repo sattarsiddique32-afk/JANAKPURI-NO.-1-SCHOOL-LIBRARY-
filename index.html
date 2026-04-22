@@ -4,384 +4,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ISUF Library Pro - AI-Powered Management System</title>
+    <title>ISUF Library Management System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        'space-black': '#0a0a0f',
-                        'neon-cyan': '#00f5ff',
-                        'neon-purple': '#8b5cf6',
-                        'electric-blue': '#3b82f6',
-                        'glass-dark': 'rgba(15, 15, 25, 0.8)',
-                        'glass-light': 'rgba(255, 255, 255, 0.05)',
+                    animation: {
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'slide-in': 'slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                        'fade-in': 'fadeIn 0.4s ease-out',
                     },
-                    backdropBlur: {
-                        xs: '2px',
+                    keyframes: {
+                        glow: {
+                            '0%': { textShadow: '0 0 5px #00f5ff, 0 0 10px #00f5ff, 0 0 15px #00f5ff' },
+                            '100%': { textShadow: '0 0 10px #00f5ff, 0 0 20px #00f5ff, 0 0 30px #00f5ff' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' }
+                        },
+                        slideIn: {
+                            '0%': { transform: 'translateX(-100%)', opacity: 0 },
+                            '100%': { transform: 'translateX(0)', opacity: 1 }
+                        },
+                        fadeIn: {
+                            '0%': { opacity: 0, transform: 'scale(0.95)' },
+                            '100%': { opacity: 1, transform: 'scale(1)' }
+                        }
                     }
                 }
             }
         }
     </script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;800&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Exo 2', sans-serif;
-            background: linear-gradient(135deg, #0a0a0f 0%, #1a0a2e 50%, #16213e 100%);
-            background-attachment: fixed;
-            overflow-x: hidden;
-            color: #e2e8f0;
-        }
-        
-        .glass-panel {
-            background: rgba(15, 15, 25, 0.8);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(0, 245, 255, 0.2);
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), 
-                        0 0 0 1px rgba(0, 245, 255, 0.1),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-        }
-        
-        .neon-glow {
-            box-shadow: 0 0 20px rgba(0, 245, 255, 0.4), 
-                        0 0 40px rgba(0, 245, 255, 0.2),
-                        inset 0 0 20px rgba(0, 245, 255, 0.1);
-        }
-        
-        .gradient-text {
-            background: linear-gradient(45deg, #00f5ff, #8b5cf6, #3b82f6);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-size: 300% 300%;
-            animation: gradientShift 3s ease infinite;
-        }
-        
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        
-        .crown-pulse {
-            animation: crownPulse 2s ease-in-out infinite;
-        }
-        
-        @keyframes crownPulse {
-            0%, 100% { transform: scale(1) rotate(-2deg); filter: drop-shadow(0 0 10px #ffd700); }
-            50% { transform: scale(1.1) rotate(2deg); filter: drop-shadow(0 0 20px #ffd700); }
-        }
-        
-        .card-tilt {
-            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            transform-style: preserve-3d;
-        }
-        
-        .card-tilt:hover {
-            transform: rotateX(5deg) rotateY(5deg) scale(1.02);
-        }
-        
-        .floating-animation {
-            animation: floating 6s ease-in-out infinite;
-        }
-        
-        @keyframes floating {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        .ripple {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .ripple::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(0, 245, 255, 0.5);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-        
-        .ripple:active::before {
-            width: 300px;
-            height: 300px;
-        }
-        
-        .typing-animation {
-            border-right: 2px solid #00f5ff;
-            animation: blink 1s infinite;
-        }
-        
-        @keyframes blink {
-            0%, 50% { border-color: #00f5ff; }
-            51%, 100% { border-color: transparent; }
-        }
-        
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
-        
-        .particle {
-            position: absolute;
-            background: radial-gradient(circle, rgba(0,245,255,0.8) 0%, transparent 70%);
-            border-radius: 50%;
-            animation: particleFloat 20s linear infinite;
-        }
-        
-        @keyframes particleFloat {
-            0% {
-                transform: translateY(100vh) scale(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-100px) scale(1);
-                opacity: 0;
-            }
-        }
-        
-        .sidebar-item {
-            position: relative;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .sidebar-item:hover {
-            transform: translateX(8px);
-            color: #00f5ff;
-        }
-        
-        .sidebar-item::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, #00f5ff, #8b5cf6);
-            transition: width 0.3s ease;
-        }
-        
-        .sidebar-item:hover::before {
-            width: 20px;
-        }
-        
-        .stat-counter {
-            font-family: 'Orbitron', monospace;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="min-h-screen relative">
-    <!-- Background Particles -->
-    <div class="particles" id="particles"></div>
+<body class="bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 min-h-screen overflow-x-hidden relative">
     
-    <div class="min-h-screen flex relative z-10">
-        <!-- Sidebar -->
-        <div class="w-72 glass-panel h-screen p-8 flex flex-col border-r border-cyan-500/20 sticky top-0">
-            <!-- Logo & Branding -->
-            <div class="mb-12">
-                <div class="flex items-center mb-4">
-                    <i class="fas fa-crown text-2xl text-yellow-400 crown-pulse mr-3"></i>
-                    <h1 class="text-2xl font-bold gradient-text tracking-wide">
-                        ISUF
-                    </h1>
-                </div>
-                <p class="text-xs opacity-75 tracking-wider uppercase font-semibold text-cyan-400">
-                    Professional Programmer
-                </p>
-                <p class="text-xs opacity-60 mt-1 font-light tracking-wider">
-                    Crafted by ISUF • Future-Ready Systems
-                </p>
+    <!-- Animated Background -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse-slow" style="animation-delay: -1s;"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse-slow" style="animation-delay: -2s;"></div>
+    </div>
+
+    <!-- Floating ISUF Badge -->
+    <div class="fixed top-6 right-6 z-50">
+        <div class="group relative">
+            <div class="w-16 h-16 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 backdrop-blur-xl rounded-2xl border border-cyan-500/30 shadow-2xl flex items-center justify-center animate-float">
+                <i class="fas fa-crown text-cyan-400 text-xl group-hover:scale-110 transition-all duration-300"></i>
             </div>
-            
-            <!-- Navigation -->
-            <nav class="flex-1 space-y-2">
-                <div class="sidebar-item cursor-pointer p-3 rounded-lg mb-2 text-lg font-semibold text-white hover:bg-white/5 transition-all duration-300"
-                     onclick="showSection('dashboard')">
-                    <i class="fas fa-tachometer-alt mr-3"></i>
-                    Dashboard
-                </div>
-                <div class="sidebar-item cursor-pointer p-3 rounded-lg mb-2 text-lg font-semibold text-white hover:bg-white/5 transition-all duration-300"
-                     onclick="showSection('add-book')">
-                    <i class="fas fa-plus-circle mr-3"></i>
-                    Add Book
-                </div>
-                <div class="sidebar-item cursor-pointer p-3 rounded-lg mb-2 text-lg font-semibold text-white hover:bg-white/5 transition-all duration-300"
-                     onclick="showSection('issue-book')">
-                    <i class="fas fa-handshake mr-3"></i>
-                    Issue Book
-                </div>
-                <div class="sidebar-item cursor-pointer p-3 rounded-lg mb-2 text-lg font-semibold text-white hover:bg-white/5 transition-all duration-300"
-                     onclick="showSection('records')">
-                    <i class="fas fa-database mr-3"></i>
-                    Records
-                </div>
-            </nav>
-            
-            <!-- AI Assistant Trigger -->
-            <div class="mt-8 pt-8 border-t border-white/10">
-                <div class="sidebar-item cursor-pointer p-3 rounded-lg text-lg font-semibold text-white hover:bg-white/5 transition-all duration-300"
-                     onclick="toggleAI()">
-                    <i class="fas fa-robot mr-3"></i>
-                    AI Assistant
-                </div>
+            <div class="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-400/90 to-orange-500/90 text-black font-bold px-2 py-1 rounded-full text-xs animate-pulse">
+                ISUF
             </div>
         </div>
-        
-        <!-- Main Content -->
-        <div class="flex-1 p-12 overflow-auto">
-            <!-- Header -->
-            <header class="mb-12">
-                <div class="flex items-center justify-between mb-4">
-                    <div>
-                        <h1 class="text-4xl font-bold gradient-text mb-2" id="pageTitle">Dashboard</h1>
-                        <p class="text-lg opacity-75 font-light">Welcome back, Admin. System optimized.</p>
+    </div>
+
+    <div class="flex h-screen bg-slate-900/50 backdrop-blur-sm">
+        <!-- Sidebar -->
+        <div class="w-64 bg-slate-900/95 backdrop-blur-xl border-r border-slate-800/50 flex flex-col shadow-2xl z-40 fixed h-full sidebar lg:relative lg:z-auto" id="sidebar">
+            <!-- Logo -->
+            <div class="p-8 border-b border-slate-800/50">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-2xl animate-glow">
+                        <i class="fas fa-book-open text-white text-xl"></i>
                     </div>
-                    <div class="floating-animation">
-                        <div class="glass-panel p-4 rounded-2xl neon-glow">
-                            <i class="fas fa-circle text-sm text-green-400 animate-pulse"></i>
-                            <span class="ml-2 text-sm font-semibold text-cyan-400">AI Online</span>
+                    <div>
+                        <h1 class="text-2xl font-black bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent animate-glow">ISUF</h1>
+                        <p class="text-xs text-slate-400 font-medium tracking-wider uppercase">Library Pro</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="flex-1 p-4 space-y-2 mt-8">
+                <a href="#" data-page="dashboard" class="nav-link flex items-center space-x-3 p-4 rounded-xl text-slate-400 hover:bg-slate-800/50 hover:text-cyan-400 transition-all duration-300 font-medium group nav-active:bg-slate-800/70 nav-active:text-cyan-400">
+                    <i class="fas fa-home text-lg group-hover:scale-110 transition-transform"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" data-page="add-book" class="nav-link flex items-center space-x-3 p-4 rounded-xl text-slate-400 hover:bg-slate-800/50 hover:text-cyan-400 transition-all duration-300 font-medium">
+                    <i class="fas fa-plus-circle text-lg group-hover:scale-110 transition-transform"></i>
+                    <span>Add Book</span>
+                </a>
+                <a href="#" data-page="issue-book" class="nav-link flex items-center space-x-3 p-4 rounded-xl text-slate-400 hover:bg-slate-800/50 hover:text-cyan-400 transition-all duration-300 font-medium">
+                    <i class="fas fa-hand-holding-book text-lg group-hover:scale-110 transition-transform"></i>
+                    <span>Issue Book</span>
+                </a>
+                <a href="#" data-page="records" class="nav-link flex items-center space-x-3 p-4 rounded-xl text-slate-400 hover:bg-slate-800/50 hover:text-cyan-400 transition-all duration-300 font-medium">
+                    <i class="fas fa-list text-lg group-hover:scale-110 transition-transform"></i>
+                    <span>Records</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 ml-0 lg:ml-64 transition-all duration-300 main-content">
+            <!-- Header -->
+            <header class="bg-slate-900/80 backdrop-blur-xl border-b border-slate-800/50 sticky top-0 z-30 p-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-xl bg-slate-800/50 hover:bg-slate-700/50 text-slate-400 hover:text-white transition-all duration-300">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                        <div class="hidden lg:block">
+                            <h1 id="page-title" class="text-3xl font-black bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent drop-shadow-lg">Dashboard</h1>
+                            <p class="text-slate-500 font-medium mt-1">Welcome to ISUF Library Management</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center text-white font-bold shadow-lg hover:scale-110 transition-all duration-300 cursor-pointer">
+                            <i class="fas fa-user"></i>
                         </div>
                     </div>
                 </div>
             </header>
-            
-            <!-- Main Sections -->
-            <div id="mainContent">
-                <!-- Dashboard Section -->
-                <section id="dashboard" class="section active">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-                        <div class="glass-panel p-8 rounded-3xl card-tilt neon-glow h-48 flex flex-col justify-between hover:neon-glow">
-                            <div class="flex items-center">
-                                <div class="w-12 h-12 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-2xl flex items-center justify-center mr-4">
-                                    <i class="fas fa-book text-2xl text-cyan-400"></i>
-                                </div>
+
+            <!-- Page Content -->
+            <main class="p-6 pb-24 relative z-10">
+                <!-- Dashboard Page -->
+                <div id="dashboard-page" class="page active">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                        <div class="stat-card bg-slate-900/80 backdrop-blur-xl border border-slate-800/50 rounded-3xl p-8 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 group shadow-2xl">
+                            <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="text-sm opacity-75 uppercase tracking-wider">Total Books</p>
-                                    <p class="text-3xl font-bold stat-counter text-white" data-target="1245">0</p>
+                                    <p class="text-slate-400 text-sm font-medium uppercase tracking-wider">Total Books</p>
+                                    <p class="text-4xl font-black bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mt-2" id="total-books">0</p>
                                 </div>
-                            </div>
-                            <div class="w-full bg-gradient-to-r from-cyan-500/20 to-transparent h-2 rounded-full overflow-hidden">
-                                <div class="bg-gradient-to-r from-cyan-400 to-purple-500 h-full w-[85%] animate-pulse"></div>
+                                <div class="w-20 h-20 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-2xl flex items-center justify-center group-hover:rotate-180 transition-all duration-700">
+                                    <i class="fas fa-book text-cyan-400 text-2xl"></i>
+                                </div>
                             </div>
                         </div>
-                        
-                        <div class="glass-panel p-8 rounded-3xl card-tilt neon-glow h-48 flex flex-col justify-between hover:neon-glow">
-                            <div class="flex items-center">
-                                <div class="w-12 h-12 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-2xl flex items-center justify-center mr-4">
-                                    <i class="fas fa-users text-2xl text-purple-400"></i>
-                                </div>
+                        <div class="stat-card bg-slate-900/80 backdrop-blur-xl border border-slate-800/50 rounded-3xl p-8 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 group shadow-2xl">
+                            <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="text-sm opacity-75 uppercase tracking-wider">Active Users</p>
-                                    <p class="text-3xl font-bold stat-counter text-white" data-target="89">0</p>
+                                    <p class="text-slate-400 text-sm font-medium uppercase tracking-wider">Issued Books</p>
+                                    <p class="text-4xl font-black bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent mt-2" id="issued-books">0</p>
                                 </div>
-                            </div>
-                            <div class="w-full bg-gradient-to-r from-purple-500/20 to-transparent h-2 rounded-full overflow-hidden">
-                                <div class="bg-gradient-to-r from-purple-400 to-blue-500 h-full w-[72%] animate-pulse"></div>
+                                <div class="w-20 h-20 bg-gradient-to-br from-orange-500/20 to-red-500/20 rounded-2xl flex items-center justify-center group-hover:rotate-180 transition-all duration-700">
+                                    <i class="fas fa-hand-holding-heart text-orange-400 text-2xl"></i>
+                                </div>
                             </div>
                         </div>
-                        
-                        <div class="glass-panel p-8 rounded-3xl card-tilt neon-glow h-48 flex flex-col justify-between hover:neon-glow">
-                            <div class="flex items-center">
-                                <div class="w-12 h-12 bg-gradient-to-r from-blue-500/20 to-green-500/20 rounded-2xl flex items-center justify-center mr-4">
-                                    <i class="fas fa-clock text-2xl text-blue-400"></i>
-                                </div>
+                        <div class="stat-card bg-slate-900/80 backdrop-blur-xl border border-slate-800/50 rounded-3xl p-8 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 group shadow-2xl">
+                            <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="text-sm opacity-75 uppercase tracking-wider">Issued Today</p>
-                                    <p class="text-3xl font-bold stat-counter text-white" data-target="23">0</p>
+                                    <p class="text-slate-400 text-sm font-medium uppercase tracking-wider">Available</p>
+                                    <p class="text-4xl font-black bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent mt-2" id="available-books">0</p>
                                 </div>
-                            </div>
-                            <div class="w-full bg-gradient-to-r from-blue-500/20 to-transparent h-2 rounded-full overflow-hidden">
-                                <div class="bg-gradient-to-r from-blue-400 to-green-500 h-full w-[45%] animate-pulse"></div>
+                                <div class="w-20 h-20 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-2xl flex items-center justify-center group-hover:rotate-180 transition-all duration-700">
+                                    <i class="fas fa-check-circle text-emerald-400 text-2xl"></i>
+                                </div>
                             </div>
                         </div>
-                        
-                        <div class="glass-panel p-8 rounded-3xl card-tilt neon-glow h-48 flex flex-col justify-between hover:neon-glow">
-                            <div class="flex items-center">
-                                <div class="w-12 h-12 bg-gradient-to-r from-green-500/20 to-orange-500/20 rounded-2xl flex items-center justify-center mr-4">
-                                    <i class="fas fa-exclamation-triangle text-2xl text-orange-400"></i>
-                                </div>
+                        <div class="stat-card bg-slate-900/80 backdrop-blur-xl border border-slate-800/50 rounded-3xl p-8 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 group shadow-2xl md:col-span-2 lg:col-span-1">
+                            <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="text-sm opacity-75 uppercase tracking-wider">Pending Returns</p>
-                                    <p class="text-3xl font-bold stat-counter text-white" data-target="12">0</p>
+                                    <p class="text-slate-400 text-sm font-medium uppercase tracking-wider">Recent Activity</p>
+                                    <p class="text-4xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mt-2" id="recent-activity">0</p>
                                 </div>
-                            </div>
-                            <div class="w-full bg-gradient-to-r from-orange-500/20 to-transparent h-2 rounded-full overflow-hidden">
-                                <div class="bg-gradient-to-r from-orange-400 to-red-500 h-full w-[30%] animate-pulse"></div>
+                                <div class="w-20 h-20 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl flex items-center justify-center group-hover:rotate-180 transition-all duration-700">
+                                    <i class="fas fa-history text-purple-400 text-2xl"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Recent Activity -->
-                    <div class="glass-panel p-8 rounded-3xl">
-                        <h3 class="text-2xl font-bold mb-6 flex items-center">
-                            <i class="fas fa-history mr-3 text-cyan-400"></i>
-                            Recent Activity
-                        </h3>
-                        <div class="space-y-4">
-                            <div class="flex items-center p-4 bg-white/5 rounded-2xl hover:bg-white/10 transition-all duration-300">
-                                <div class="w-12 h-12 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-2xl flex items-center justify-center mr-4">
-                                    <i class="fas fa-book text-white text-lg"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <p class="font-semibold text-white">Book Issued</p>
-                                    <p class="text-sm opacity-75">"The Alchemist" to John Doe</p>
-                                </div>
-                                <div class="text-xs opacity-50">2 min ago</div>
+
+                    <!-- Recent Books -->
+                    <div class="bg-slate-900/80 backdrop-blur-xl border border-slate-800/50 rounded-3xl p-8 shadow-2xl">
+                        <h2 class="text-2xl font-black bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-6 flex items-center space-x-3">
+                            <i class="fas fa-book"></i>
+                            <span>Recent Books</span>
+                        </h2>
+                        <div id="recent-books-list" class="space-y-4">
+                            <div class="text-center py-12 text-slate-500">
+                                <i class="fas fa-book-open text-6xl mb-4 opacity-50"></i>
+                                <p class="text-lg font-medium">No books added yet</p>
+                                <p class="text-sm">Add your first book to get started</p>
                             </div>
-                            <!-- More activity items -->
                         </div>
                     </div>
-                </section>
-                
-                <!-- Add Book Section -->
-                <section id="add-book" class="section">
+                </div>
+
+                <!-- Add Book Page -->
+                <div id="add-book-page" class="page hidden">
                     <div class="max-w-2xl mx-auto">
-                        <div class="glass-panel p-12 rounded-4xl card-tilt neon-glow">
-                            <h2 class="text-3xl font-bold gradient-text mb-8 text-center">Add New Book</h2>
-                            <form id="addBookForm" class="space-y-8">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div>
-                                        <label class="block text-sm font-semibold mb-3 text-cyan-400">Book Title</label>
-                                        <input type="text" required class="w-full glass-panel p-4 rounded-2xl border-2 border-transparent focus:border-cyan-400 focus:neon-glow transition-all duration-300 text-lg placeholder:opacity-50" placeholder="Enter book title">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold mb-3 text-cyan-400">Author</label>
-                                        <input type="text" required class="w-full glass-panel p-4 rounded-2xl border-2 border-transparent focus:border-cyan-400 focus:neon-glow transition-all duration-300 text-lg placeholder:opacity-50" placeholder="Author name">
+                        <div class="text-center mb-12">
+                            <h1 class="text-5xl font-black bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent mb-4">
+                                Add New Book
+                            </h1>
+                            <p class="text-xl text-slate-400">Add books to your library collection</p>
+                        </div>
+
+                        <div class="bg-slate-900/80 backdrop-blur-xl border border-slate-800/50 rounded-3xl p-8 shadow-2xl">
+                            <form id="add-book-form" class="space-y-6">
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-300 mb-3">Book ID <span class="text-red-400">*</span></label>
+                                    <input type="text" id="book-id" required maxlength="20" class="w-full bg-slate-800/50 border border-slate-700/50 rounded-2xl px-5 py-4 text-white placeholder-slate-400 focus:ring-4 focus:ring-cyan-500/30 focus:border-cyan-500 transition-all duration-300 text-lg backdrop-blur-sm" placeholder="Enter unique book ID">
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-300 mb-3">Book Name</label>
+                                    <input type="text" id="book-name" class="w-full bg-slate-800/50 border border-slate-700/50 rounded-2xl px-5 py-4 text-white placeholder-slate-400 focus:ring-4 focus:ring-cyan-500/30 focus:border-cyan-500 transition-all duration-300 backdrop-blur-sm" placeholder="Enter book title">
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-300 mb-3">Category</label>
+                                    <select id="book-category" class="w-full bg-slate-800/50 border border-slate-700/50 rounded-2xl px-5 py-4 text-white focus:ring-4 focus:ring-cyan-500/30 focus:border-cyan-500 transition-all duration-300 backdrop-blur-sm">
+                                        <option value="">Select category</option>
+                                        <option value="Fiction">Fiction</option>
+                                        <option value="Non-Fiction">Non-Fiction</option>
+                                        <option value="Science">Science</option>
+                                        <option value="Technology">Technology</option>
+                                        <option value="History">History</option>
+                                        <option value="Biography">Biography</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-300 mb-3">Book Image</label>
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-32 h-32 bg-slate-800/50 border-4 border-dashed border-slate-700/50 rounded-2xl flex flex-col items-center justify-center text-center group hover:border-cyan-500/50 transition-all duration-300 cursor-pointer image-upload-zone" id="image-upload-zone">
+                                            <i class="fas fa-camera text-2xl text-slate-400 group-hover:text-cyan-400 mb-2 transition-colors"></i>
+                                            <p class="text-sm text-slate-400 group-hover:text-cyan-400">Upload or</p>
+                                            <p class="text-xs text-slate-500">Click to capture</p>
+                                            <input type="file" id="book-image" accept="image/*" class="hidden">
+                                        </div>
+                                        <div class="image-preview-container hidden">
+                                            <img id="image-preview" class="w-32 h-32 object-cover rounded-2xl shadow-2xl">
+                                            <button type="button" id="remove-image" class="absolute -top-2 -right-2 w-8 h-8 bg-red-500/90 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg hover:scale-110 transition-all duration-300">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-semibold mb-3 text-cyan-400">ISBN</label>
-                                    <input type="text" required class="w-full glass-panel p-4 rounded-2xl border-2 border-transparent focus:border-cyan-400 focus:neon-glow transition-all duration-300 text-lg placeholder:opacity-50" placeholder="ISBN number">
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-semibold mb-3 text-cyan-400">Cover Image</label>
-                                    <input type="file" accept="image/*" id="bookCover" class="w-full glass-panel p-4 rounded-2xl border-2 border-transparent focus:border-cyan-400 focus:neon-glow transition-all duration-300 text-lg file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-gradient-to-r file:from-cyan-500 file:to-purple-500 file:text-white hover:file:brightness-110">
+
+                                <button type="submit" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold py-6 px-8 rounded-3xl text-lg shadow-2xl hover:shadow-cyan-500/25 hover:-translate-y-1 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Add Book
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Issue Book Page -->
+                <div id="issue-book-page" class="page hidden">
+                    <div class="max-w-2xl mx-auto">
+                        <div class="text-center mb-12">
+                            <h1 class="text-5xl font-black bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent mb-
